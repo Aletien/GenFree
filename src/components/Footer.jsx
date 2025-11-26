@@ -6,23 +6,23 @@ const Footer = () => {
             <div className="container">
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem' }}>
                     <div>
-                        <img src="/GenFree/logo.svg" alt="GenFree Network" style={{ height: '70px', marginBottom: '1rem' }} />
+                        <img src="/logo.svg" alt="GenFree Network" style={{ height: '70px', marginBottom: '1rem' }} />
                         <p style={{ color: 'var(--color-text-muted)' }}>GENFREE.</p>
                         <p style={{ color: 'var(--color-text-muted)' }}>A Spirit-led initiative transforming lives for God's glory.</p>
                     </div>
 
                     <div>
-                        <h4 style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>Quick Links</h4>
+                        <h4 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--color-white)' }}>Quick Links</h4>
                         <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                            <li><a href="/about" style={{ color: 'var(--color-text-muted)' }}>About Us</a></li>
-                            <li><a href="/activities" style={{ color: 'var(--color-text-muted)' }}>Activities</a></li>
-                            <li><a href="/contact" style={{ color: 'var(--color-text-muted)' }}>Contact</a></li>
+                            <li><a href="/about" style={{ color: '#94a3b8', textDecoration: 'none' }} onMouseOver={(e) => e.target.style.color = 'var(--color-white)'} onMouseOut={(e) => e.target.style.color = '#94a3b8'}>About Us</a></li>
+                            <li><a href="/activities" style={{ color: '#94a3b8', textDecoration: 'none' }} onMouseOver={(e) => e.target.style.color = 'var(--color-white)'} onMouseOut={(e) => e.target.style.color = '#94a3b8'}>Activities</a></li>
+                            <li><a href="/contact" style={{ color: '#94a3b8', textDecoration: 'none' }} onMouseOver={(e) => e.target.style.color = 'var(--color-white)'} onMouseOut={(e) => e.target.style.color = '#94a3b8'}>Contact</a></li>
                         </ul>
                     </div>
 
                     <div>
-                        <h4 style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>Stay Updated</h4>
-                        <p style={{ color: 'var(--color-text-muted)', marginBottom: '1rem', fontSize: '0.9rem' }}>
+                        <h4 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--color-white)' }}>Stay Updated</h4>
+                        <p style={{ color: '#94a3b8', marginBottom: '1rem', fontSize: '0.9rem' }}>
                             Subscribe to our newsletter for the latest updates and inspiration.
                         </p>
                         <form style={{ display: 'flex', gap: '0.5rem' }} onSubmit={(e) => e.preventDefault()}>

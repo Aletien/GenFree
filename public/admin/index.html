@@ -4,34 +4,24 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GenFree Network Admin</title>
+    <!-- Netlify Identity Widget -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   </head>
   <body>
-    <h1 style="color: blue;">TEST - Can you see this?</h1>
-    <p>If you can see this text, the HTML is loading correctly.</p>
+    <!-- Include the script that builds the page and powers Netlify CMS -->
+    <script src="https://unpkg.com/netlify-cms@^2.10.0/dist/netlify-cms.js"></script>
     
-    <div id="test-results">
-      <h2>Browser Tests:</h2>
-      <div>Current URL: <span id="current-url"></span></div>
-      <div>User Agent: <span id="user-agent"></span></div>
-    </div>
-
     <script>
-      console.log('Basic HTML test loaded');
-      document.getElementById('current-url').textContent = window.location.href;
-      document.getElementById('user-agent').textContent = navigator.userAgent;
-      
-      // Test if we can access the config
-      fetch('/admin/config.yml')
-        .then(response => {
-          const resultDiv = document.createElement('div');
-          resultDiv.textContent = 'Config file status: ' + response.status;
-          document.getElementById('test-results').appendChild(resultDiv);
-        })
-        .catch(error => {
-          const resultDiv = document.createElement('div');
-          resultDiv.textContent = 'Config error: ' + error.message;
-          document.getElementById('test-results').appendChild(resultDiv);
+      // Netlify Identity Event Handlers
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on("init", user => {
+          if (!user) {
+            window.netlifyIdentity.on("login", () => {
+              document.location.href = "/admin/";
+            });
+          }
         });
+      }
     </script>
   </body>
 </html>
