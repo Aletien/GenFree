@@ -245,12 +245,53 @@ button {
     background-color: var(--color-bg) !important;
   }
   
-  /* Mobile text visibility fixes */
+  /* Mobile subtitle and heading visibility fixes */
   h1, h2, h3, h4, h5, h6 {
     color: var(--color-text) !important;
   }
   
-  p:not([style*="color"]), span:not([style*="color"]), div:not([style*="color"]) {
+  /* Specific subtitle fixes */
+  .section-title {
+    color: var(--color-primary) !important;
+  }
+  
+  /* About page subtitle fixes */
+  h2[style*="color: var(--color-accent)"] {
+    color: var(--color-primary) !important;
+  }
+  
+  /* Activities subtitle fixes */
+  h2[style*="color: var(--color-white)"] {
+    color: white !important;
+  }
+  
+  /* Card subtitle fixes */
+  .card h2, .card h3, .card h4 {
+    color: var(--color-primary) !important;
+  }
+  
+  /* Event card subtitles */
+  h3[style*="color: var(--color-primary)"] {
+    color: var(--color-primary) !important;
+  }
+  
+  /* Contact page subtitles */
+  h2[style*="fontSize: '2rem'"] {
+    color: var(--color-primary) !important;
+  }
+  
+  /* EventDetails subtitles */
+  h2[style*="fontSize: '2rem'"][style*="color: var(--color-primary)"] {
+    color: var(--color-primary) !important;
+  }
+  
+  /* Gallery subtitle */
+  h3[style*="fontSize: '1.1rem'"] {
+    color: var(--color-text) !important;
+  }
+  
+  /* General paragraph text */
+  p:not([style*="color: white"]):not([style*="color: var(--color-white)"]) {
     color: var(--color-text) !important;
   }
   
@@ -265,10 +306,6 @@ button {
     color: var(--color-text) !important;
   }
   
-  .card h3, .card h4 {
-    color: var(--color-primary) !important;
-  }
-  
   .card p {
     color: var(--color-text) !important;
   }
@@ -281,9 +318,30 @@ button {
   
   /* Ensure hero text stays white on mobile */
   [style*="color: white"], 
+  [style*="color: rgba(255,255,255"], 
   .hero h1,
   .hero p,
-  .hero span {
+  .hero span,
+  .hero div {
     color: white !important;
+  }
+  
+  /* Activity card titles on mobile */
+  .activity-card h3 {
+    color: var(--color-primary) !important;
+  }
+  
+  /* Testimonial content */
+  .testimonial h3, .testimonial h4 {
+    color: var(--color-primary) !important;
+  }
+  
+  /* Footer content - keep proper colors */
+  footer h4, footer h3 {
+    color: #f1f5f9 !important;
+  }
+  
+  footer p, footer a {
+    color: #94a3b8 !important;
   }
 }
