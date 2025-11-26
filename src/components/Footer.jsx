@@ -6,7 +6,7 @@ const Footer = () => {
             <div className="container">
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem' }}>
                     <div>
-                        <img src="/logo.svg" alt="GenFree Network" style={{ height: '70px', marginBottom: '1rem' }} />
+                        <img src="/GenFree/logo.svg" alt="GenFree Network" style={{ height: '70px', marginBottom: '1rem' }} />
                         <p style={{ color: 'var(--color-text-muted)' }}>Generation Freedom in Christ.</p>
                         <p style={{ color: 'var(--color-text-muted)' }}>A Spirit-led initiative transforming lives for God's glory.</p>
                     </div>
