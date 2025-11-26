@@ -10,6 +10,17 @@
     <!-- Include the script that builds the page and powers Decap CMS -->
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
     <script>
+      // Initialize CMS with better error handling
+      CMS.init({
+        config: {
+          load_config_file: true
+        }
+      }).catch(error => {
+        console.error('CMS initialization error:', error);
+        document.body.innerHTML = '<h1>CMS Error</h1><p>' + error.message + '</p><p>Check browser console for details.</p>';
+      });
+    </script>
+    <script>
       if (window.netlifyIdentity) {
         window.netlifyIdentity.on("init", user => {
           if (!user) {
