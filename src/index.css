@@ -231,3 +231,59 @@ button {
     font-size: 0.9rem;
   }
 }
+
+/* Mobile Content Visibility Fixes */
+@media (max-width: 768px) {
+  /* Hide desktop-only elements like Join Events button */
+  .desktop-only {
+    display: none !important;
+  }
+  
+  /* Ensure proper text colors on mobile */
+  body {
+    color: var(--color-text) !important;
+    background-color: var(--color-bg) !important;
+  }
+  
+  /* Mobile text visibility fixes */
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--color-text) !important;
+  }
+  
+  p:not([style*="color"]), span:not([style*="color"]), div:not([style*="color"]) {
+    color: var(--color-text) !important;
+  }
+  
+  /* Navigation text on mobile */
+  .nav-link, .navbar a {
+    color: var(--color-text) !important;
+  }
+  
+  /* Mobile card content */
+  .card {
+    background-color: var(--color-surface) !important;
+    color: var(--color-text) !important;
+  }
+  
+  .card h3, .card h4 {
+    color: var(--color-primary) !important;
+  }
+  
+  .card p {
+    color: var(--color-text) !important;
+  }
+  
+  /* Mobile button styling */
+  .btn {
+    color: var(--color-white) !important;
+    background-color: var(--color-primary) !important;
+  }
+  
+  /* Ensure hero text stays white on mobile */
+  [style*="color: white"], 
+  .hero h1,
+  .hero p,
+  .hero span {
+    color: white !important;
+  }
+}

@@ -2,7 +2,7 @@ import { Facebook, Instagram, Youtube, Twitter } from 'lucide-react';
 
 const Footer = () => {
     return (
-        <footer style={{ backgroundColor: 'var(--color-text)', color: 'var(--color-white)', padding: '3rem 0', marginTop: 'auto' }}>
+        <footer style={{ backgroundColor: '#020617', color: 'var(--color-white)', padding: '3rem 0', marginTop: 'auto' }}>
             <div className="container">
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem' }}>
                     <div>

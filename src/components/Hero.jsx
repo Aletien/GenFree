@@ -124,8 +124,8 @@ const Hero = () => {
                         {t('hero.subtitle')}
                     </p>
 
-                    {/* CTA Button */}
-                    <Link to="/events" className="btn btn-accent" style={{
+                    {/* CTA Button - Hidden on mobile */}
+                    <Link to="/events" className="btn btn-accent desktop-only" style={{
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '0.75rem',
@@ -134,7 +134,7 @@ const Hero = () => {
                         fontWeight: 700,
                         textTransform: 'uppercase',
                         letterSpacing: '1px',
-                        boxShadow: '0 10px 30px rgba(23, 162, 184, 0.4)',
+                        boxShadow: '0 10px 30px rgba(16, 185, 129, 0.4)',
                         border: 'none'
                     }}>
                         {t('hero.joinEvents')}
