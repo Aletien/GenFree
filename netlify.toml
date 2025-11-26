@@ -5,7 +5,18 @@
 [build.environment]
   NETLIFY = "true"
 
-# SPA redirect rule
+# Admin routes - serve admin files directly
+[[redirects]]
+  from = "/admin/"
+  to = "/admin/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/index.html"
+  status = 200
+
+# SPA redirect rule for main app (but exclude admin)
 [[redirects]]
   from = "/*"
   to = "/index.html"
