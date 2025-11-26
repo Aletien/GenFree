@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Globe, Search } from 'lucide-react';
+import { Menu, X, Sun, Moon, Globe, Search } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [showLangMenu, setShowLangMenu] = useState(false);
+    const { theme, toggleTheme } = useTheme();
     const { language, changeLanguage, t } = useLanguage();
 
     const navLinks = [
@@ -173,6 +175,24 @@ const Navbar = () => {
                     </div>
 
                     {/* Theme Toggle */}
+                    <button
+                        onClick={toggleTheme}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '36px',
+                            height: '36px',
+                            border: '1px solid rgba(255,255,255,0.3)',
+                            borderRadius: '4px',
+                            backgroundColor: 'transparent',
+                            color: 'var(--color-accent)',
+                            cursor: 'pointer'
+                        }}
+                        aria-label="Toggle theme"
+                    >
+                        {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+                    </button>
 
                     {/* Mobile Menu Button */}
                     <button
