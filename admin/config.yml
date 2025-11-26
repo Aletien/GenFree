@@ -1,0 +1,136 @@
+# Decap CMS Configuration
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+# Enable editorial workflow (draft, in review, ready)
+publish_mode: editorial_workflow
+
+# Collections define the structure for different content types
+collections:
+  # Site Settings
+  - name: "settings"
+    label: "Site Settings"
+    files:
+      - name: "general"
+        label: "General Settings"
+        file: "src/data/settings.json"
+        fields:
+          - { label: "Site Title", name: "siteTitle", widget: "string" }
+          - { label: "Site Description", name: "siteDescription", widget: "text" }
+          - { label: "Contact Email", name: "contactEmail", widget: "string" }
+          - { label: "Phone Number", name: "phoneNumber", widget: "string" }
+          - { label: "WhatsApp Number", name: "whatsappNumber", widget: "string" }
+          - { label: "Address", name: "address", widget: "text" }
+
+  # Hero Section
+  - name: "hero"
+    label: "Hero Section"
+    files:
+      - name: "hero-content"
+        label: "Hero Content"
+        file: "src/data/hero.json"
+        fields:
+          - { label: "Main Title", name: "title", widget: "string" }
+          - { label: "Subtitle", name: "subtitle", widget: "text" }
+          - { label: "Background Image", name: "backgroundImage", widget: "image" }
+          - { label: "Call to Action Text", name: "ctaText", widget: "string" }
+          - { label: "Call to Action Link", name: "ctaLink", widget: "string" }
+
+  # Gallery Images
+  - name: "gallery"
+    label: "Gallery"
+    folder: "src/data/gallery"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Image", name: "image", widget: "image" }
+      - { label: "Category", name: "category", widget: "select", options: ["Worship", "Community", "Youth", "Leadership", "Events"] }
+      - { label: "Description", name: "description", widget: "text", required: false }
+      - { label: "Date", name: "date", widget: "datetime" }
+
+  # Events
+  - name: "events"
+    label: "Events"
+    folder: "src/data/events"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Event Title", name: "title", widget: "string" }
+      - { label: "Event Image", name: "image", widget: "image" }
+      - { label: "Event Date", name: "date", widget: "datetime" }
+      - { label: "Location", name: "location", widget: "string" }
+      - { label: "Description", name: "description", widget: "markdown" }
+      - { label: "Registration Link", name: "registrationLink", widget: "string", required: false }
+      - { label: "Price", name: "price", widget: "string", default: "Free" }
+      - { label: "Category", name: "category", widget: "select", options: ["Worship", "Conference", "Youth", "Training", "Community"] }
+
+  # Testimonials
+  - name: "testimonials"
+    label: "Testimonials"
+    folder: "src/data/testimonials"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Person Name", name: "name", widget: "string" }
+      - { label: "Photo", name: "photo", widget: "image", required: false }
+      - { label: "Role/Title", name: "role", widget: "string" }
+      - { label: "Testimonial Text", name: "text", widget: "text" }
+      - { label: "Rating", name: "rating", widget: "number", min: 1, max: 5, default: 5 }
+
+  # Pages Content
+  - name: "pages"
+    label: "Pages"
+    files:
+      - name: "about"
+        label: "About Page"
+        file: "src/data/about.json"
+        fields:
+          - { label: "Page Title", name: "title", widget: "string" }
+          - { label: "Hero Image", name: "heroImage", widget: "image" }
+          - { label: "Mission Statement", name: "mission", widget: "markdown" }
+          - { label: "Vision Statement", name: "vision", widget: "markdown" }
+          - { label: "Values", name: "values", widget: "list", fields: [
+              { label: "Value Title", name: "title", widget: "string" },
+              { label: "Value Description", name: "description", widget: "text" }
+            ]}
+          - { label: "Team Members", name: "team", widget: "list", fields: [
+              { label: "Name", name: "name", widget: "string" },
+              { label: "Role", name: "role", widget: "string" },
+              { label: "Photo", name: "photo", widget: "image" },
+              { label: "Bio", name: "bio", widget: "text" }
+            ]}
+
+      - name: "activities"
+        label: "Activities Page"
+        file: "src/data/activities.json"
+        fields:
+          - { label: "Page Title", name: "title", widget: "string" }
+          - { label: "Page Description", name: "description", widget: "text" }
+          - { label: "Activities", name: "activities", widget: "list", fields: [
+              { label: "Activity Name", name: "name", widget: "string" },
+              { label: "Activity Image", name: "image", widget: "image" },
+              { label: "Description", name: "description", widget: "markdown" },
+              { label: "Schedule", name: "schedule", widget: "string" },
+              { label: "Location", name: "location", widget: "string" }
+            ]}
+
+  # News/Blog Posts
+  - name: "news"
+    label: "News & Updates"
+    folder: "src/data/news"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Featured Image", name: "image", widget: "image" }
+      - { label: "Publish Date", name: "date", widget: "datetime" }
+      - { label: "Author", name: "author", widget: "string" }
+      - { label: "Excerpt", name: "excerpt", widget: "text" }
+      - { label: "Content", name: "body", widget: "markdown" }
+      - { label: "Tags", name: "tags", widget: "list", allow_add: true }
+      - { label: "Featured", name: "featured", widget: "boolean", default: false }
