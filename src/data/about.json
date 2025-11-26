@@ -1,0 +1,38 @@
+{
+  "title": "About GenFree Network",
+  "heroImage": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&q=80",
+  "mission": "To create a loving community where believers can grow in faith, fellowship, and service to God and others.",
+  "vision": "To be a beacon of hope and love in our community, spreading the gospel through authentic relationships and meaningful worship.",
+  "values": [
+    {
+      "title": "Faith",
+      "description": "We believe in the transformative power of faith in Jesus Christ."
+    },
+    {
+      "title": "Community",
+      "description": "We value authentic relationships and genuine fellowship among believers."
+    },
+    {
+      "title": "Service",
+      "description": "We are committed to serving God and our community with love and humility."
+    },
+    {
+      "title": "Growth",
+      "description": "We encourage continuous spiritual growth and learning in God's word."
+    }
+  ],
+  "team": [
+    {
+      "name": "Pastor John Smith",
+      "role": "Senior Pastor",
+      "photo": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80",
+      "bio": "Pastor John has been serving the community for over 15 years, bringing wisdom and compassion to his ministry."
+    },
+    {
+      "name": "Sarah Johnson",
+      "role": "Worship Leader",
+      "photo": "https://images.unsplash.com/photo-1494790108755-2616b612b1e1?w=400&q=80",
+      "bio": "Sarah leads our worship team with passion and dedication, creating an atmosphere of authentic praise."
+    }
+  ]
+}

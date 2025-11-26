@@ -3,6 +3,7 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 import WhatsAppWidget from './WhatsAppWidget';
 import ScrollToTop from './ScrollToTop';
+import AdminAccess from './AdminAccess';
 
 const Layout = () => {
     return (
@@ -14,6 +15,7 @@ const Layout = () => {
             <Footer />
             <WhatsAppWidget />
             <ScrollToTop />
+            <AdminAccess />
         </div>
     );
 };
