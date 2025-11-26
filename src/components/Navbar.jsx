@@ -122,7 +122,7 @@ const Navbar = () => {
                             <span>{currentLang?.code.toUpperCase()}</span>
                         </button>
 
-                        {showLangMenu && (
+                        {/* {showLangMenu && (
                             <div style={{
                                 position: 'absolute',
                                 top: '100%',
@@ -171,7 +171,7 @@ const Navbar = () => {
                                     </button>
                                 ))}
                             </div>
-                        )}
+                        )} */}
                     </div>
 
                     {/* Theme Toggle */}
