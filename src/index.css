@@ -250,6 +250,35 @@ button {
     color: var(--color-text) !important;
   }
   
+  /* Main content areas */
+  .container, main, article, section {
+    color: var(--color-text) !important;
+  }
+  
+  /* Ensure all text elements are visible */
+  span:not([style*="color"]), 
+  div:not([style*="color"]):not([style*="backgroundColor"]), 
+  li:not([style*="color"]),
+  a:not([style*="color"]),
+  text {
+    color: var(--color-text) !important;
+  }
+  
+  /* Force visibility for common content elements */
+  .content, .description, .text {
+    color: var(--color-text) !important;
+  }
+  
+  /* Activity descriptions and content */
+  .activity-description, .event-description {
+    color: var(--color-text) !important;
+  }
+  
+  /* About page content */
+  .about-content p, .about-section p {
+    color: var(--color-text) !important;
+  }
+  
   /* Specific subtitle fixes */
   .section-title {
     color: var(--color-primary) !important;
@@ -290,9 +319,16 @@ button {
     color: var(--color-text) !important;
   }
   
-  /* General paragraph text */
-  p:not([style*="color: white"]):not([style*="color: var(--color-white)"]) {
+  /* General paragraph text - be more specific */
+  p {
     color: var(--color-text) !important;
+  }
+  
+  /* Exception: Keep white text in hero and styled sections */
+  [style*="color: white"] p,
+  [style*="color: var(--color-white)"] p,
+  [style*="backgroundColor: var(--color-primary)"] p {
+    color: white !important;
   }
   
   /* Navigation text on mobile */
@@ -306,8 +342,13 @@ button {
     color: var(--color-text) !important;
   }
   
-  .card p {
+  .card p, .card span, .card div {
     color: var(--color-text) !important;
+  }
+  
+  /* Activity cards specific styling */
+  .card h3[style*="color:"] {
+    color: var(--color-primary) !important;
   }
   
   /* Mobile button styling */
