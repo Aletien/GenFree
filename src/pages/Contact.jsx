@@ -39,8 +39,8 @@ const Contact = () => {
                 textAlign: 'center'
             }}>
                 <div className="container">
-                    <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginBottom: '1rem' }}>Get In Touch</h1>
-                    <p style={{ maxWidth: '600px', margin: '0 auto', opacity: 0.9, fontSize: 'clamp(1rem, 2vw, 1.1rem)' }}>
+                    <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginBottom: '1rem', color: 'white', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>Get In Touch</h1>
+                    <p style={{ maxWidth: '600px', margin: '0 auto', opacity: 0.9, fontSize: 'clamp(1rem, 2vw, 1.1rem)', color: 'white', textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>
                         We'd love to hear from you. Reach out to us with any questions or prayer requests.
                     </p>
                 </div>
