@@ -4,23 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GenFree Network Admin</title>
+    <!-- Load Netlify Identity Widget -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   </head>
   <body>
-    <!-- Include the script that builds the page and powers Decap CMS -->
-    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <!-- Use stable Decap CMS version 2.x to avoid DOM manipulation bugs -->
+    <script src="https://unpkg.com/decap-cms@^2.10.192/dist/decap-cms.js"></script>
     <script>
-      // Initialize CMS with better error handling
-      CMS.init({
-        config: {
-          load_config_file: true
-        }
-      }).catch(error => {
-        console.error('CMS initialization error:', error);
-        document.body.innerHTML = '<h1>CMS Error</h1><p>' + error.message + '</p><p>Check browser console for details.</p>';
-      });
-    </script>
-    <script>
+      // Netlify Identity integration
       if (window.netlifyIdentity) {
         window.netlifyIdentity.on("init", user => {
           if (!user) {
