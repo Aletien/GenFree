@@ -9,7 +9,7 @@ const GallerySection = () => {
     const galleryItems = [
         {
             id: 1,
-            image: 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=800',
+            image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800',
             title: 'Worship Night',
             category: 'Worship'
         },
@@ -38,8 +38,14 @@ const GallerySection = () => {
             category: 'Leadership'
         },
         {
+            id: 9,
+            image: 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=800',
+            title: 'Prayer Circle',
+            category: 'Worship'
+        },
+        {
             id: 6,
-            image: 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=800',
+            image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800',
             title: 'Praise Session',
             category: 'Worship'
         },
