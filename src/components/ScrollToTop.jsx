@@ -39,7 +39,7 @@ const ScrollToTop = () => {
                     style={{
                         position: 'fixed',
                         bottom: '2rem',
-                        right: '2rem',
+                        right: '5.5rem',
                         backgroundColor: 'var(--color-accent)',
                         color: 'white',
                         border: 'none',
