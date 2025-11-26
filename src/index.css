@@ -1,22 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Montserrat:wght@400;600;700&display=swap');
 
+/* Light Theme (Default) - Modern Professional Palette */
 :root {
-  /* GenFree Logo Colors - Updated to match logo exactly */
-  --color-primary: #060606;
-  /* Dark black from logo */
-  --color-primary-light: #161616;
-  /* Lighter black from logo */
-  --color-accent: #2D837A;
-  /* Primary teal from logo */
-  --color-accent-light: #17a2b8;
-  /* Secondary teal from logo */
-  --color-bg: #F6F6F6;
-  /* Light gray background from logo */
+  /* Modern Professional Colors - Enhanced logo visibility */
+  --color-primary: #0f766e;
+  /* Deep teal - professional and modern */
+  --color-primary-light: #14b8a6;
+  /* Vibrant teal */
+  --color-accent: #1e40af;
+  /* Professional blue for contrast */
+  --color-accent-light: #3b82f6;
+  /* Lighter blue */
+  --color-bg: #fafafa;
+  /* Soft off-white background */
   --color-surface: #ffffff;
-  --color-text: #090909;
-  /* Dark text from logo */
-  --color-text-muted: #64748b;
+  /* Pure white surfaces */
+  --color-text: #111827;
+  /* Rich dark text */
+  --color-text-muted: #6b7280;
+  /* Professional gray */
   --color-white: #ffffff;
+  --color-border: #e5e7eb;
+  /* Subtle borders */
+  --color-success: #059669;
+  /* Success green */
+  --color-warning: #d97706;
+  /* Warning orange */
 
   --font-heading: 'Poppins', sans-serif;
   --font-body: 'Montserrat', sans-serif;
@@ -24,30 +33,38 @@
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-glow: 0 0 15px rgba(245, 158, 11, 0.3);
+  --shadow-glow: 0 0 20px rgba(15, 118, 110, 0.4);
 }
 
-/* Dark Theme */
+/* Dark Theme - Modern Professional Palette */
 [data-theme="dark"] {
-  --color-primary: #F6F6F6;
-  /* Light gray for dark theme */
-  --color-primary-light: #e2e8f0;
-  --color-accent: #17a2b8;
-  /* Secondary teal for dark theme */
-  --color-accent-light: #2D837A;
-  /* Primary teal for dark theme */
-  --color-bg: #060606;
-  /* Dark black background */
-  --color-surface: #161616;
-  /* Lighter black surface */
-  --color-text: #F2F2F2;
-  /* Light text for dark theme */
+  --color-primary: #14b8a6;
+  /* Vibrant teal for dark theme */
+  --color-primary-light: #5eead4;
+  /* Bright teal accent */
+  --color-accent: #60a5fa;
+  /* Modern blue for dark theme */
+  --color-accent-light: #93c5fd;
+  /* Lighter blue */
+  --color-bg: #0f172a;
+  /* Deep navy background */
+  --color-surface: #1e293b;
+  /* Slate surface */
+  --color-text: #f1f5f9;
+  /* Crisp light text */
   --color-text-muted: #94a3b8;
-  --color-white: #060606;
+  --color-white: #ffffff;
+  --color-border: #334155;
+  /* Modern slate borders */
+  --color-success: #10b981;
+  /* Success green */
+  --color-warning: #f59e0b;
+  /* Warning amber */
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 25px rgba(20, 184, 166, 0.5);
 }
 
 * {
