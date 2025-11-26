@@ -21,6 +21,17 @@
             });
           }
         });
+        
+        // Handle email confirmations
+        window.netlifyIdentity.on("signup", user => {
+          window.netlifyIdentity.gotrue.confirm(
+            user.confirmation_token,
+            true
+          ).then(response => {
+            console.log("User confirmed:", response);
+            document.location.href = "/admin/";
+          });
+        });
       }
     </script>
   </body>
