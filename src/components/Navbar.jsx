@@ -45,7 +45,7 @@ const Navbar = () => {
             }}>
                 {/* Logo */}
                 <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
-                    <img src="/logo.svg" alt="GenFree Network" style={{ height: '50px' }} />
+                    <img src="/logo.svg" alt="GenFree Network" style={{ height: '80px' }} />
                 </Link>
 
                 {/* Desktop Menu - Centered */}
