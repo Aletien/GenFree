@@ -1,17 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Montserrat:wght@400;600;700&display=swap');
 
 :root {
-  /* GenFree Logo Colors */
-  --color-primary: #000000;
-  /* Black from logo */
-  --color-primary-light: #1a1a1a;
-  --color-accent: #17a2b8;
-  /* Teal from logo */
-  --color-accent-light: #20c0d8;
-  --color-bg: #f8fafc;
-  /* Off-white - Purity */
+  /* GenFree Logo Colors - Updated to match logo exactly */
+  --color-primary: #060606;
+  /* Dark black from logo */
+  --color-primary-light: #161616;
+  /* Lighter black from logo */
+  --color-accent: #2D837A;
+  /* Primary teal from logo */
+  --color-accent-light: #17a2b8;
+  /* Secondary teal from logo */
+  --color-bg: #F6F6F6;
+  /* Light gray background from logo */
   --color-surface: #ffffff;
-  --color-text: #334155;
+  --color-text: #090909;
+  /* Dark text from logo */
   --color-text-muted: #64748b;
   --color-white: #ffffff;
 
@@ -26,15 +29,21 @@
 
 /* Dark Theme */
 [data-theme="dark"] {
-  --color-primary: #ffffff;
+  --color-primary: #F6F6F6;
+  /* Light gray for dark theme */
   --color-primary-light: #e2e8f0;
-  --color-accent: #20c0d8;
-  --color-accent-light: #17a2b8;
-  --color-bg: #0f172a;
-  --color-surface: #1e293b;
-  --color-text: #e2e8f0;
+  --color-accent: #17a2b8;
+  /* Secondary teal for dark theme */
+  --color-accent-light: #2D837A;
+  /* Primary teal for dark theme */
+  --color-bg: #060606;
+  /* Dark black background */
+  --color-surface: #161616;
+  /* Lighter black surface */
+  --color-text: #F2F2F2;
+  /* Light text for dark theme */
   --color-text-muted: #94a3b8;
-  --color-white: #0f172a;
+  --color-white: #060606;
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
