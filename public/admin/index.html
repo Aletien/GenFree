@@ -39,7 +39,7 @@
         // Test 2: Check if we can load CMS
         updateStatus('✓ Testing Decap CMS...', 'info');
         const cmsScript = document.createElement('script');
-        cmsScript.src = 'https://cdn.jsdelivr.net/npm/netlify-cms@2.10.192/dist/netlify-cms.js';
+        cmsScript.src = '/admin/netlify-cms.js';
         cmsScript.onload = function() {
           updateStatus('✓ Decap CMS script loaded successfully', 'success');
           
