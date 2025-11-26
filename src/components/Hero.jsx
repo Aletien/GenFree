@@ -15,7 +15,7 @@ const Hero = () => {
             alignItems: 'center',
             justifyContent: 'center',
             overflow: 'hidden',
-            backgroundImage: 'url(https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=1920&q=80)',
+            backgroundImage: 'url(https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&q=80)',
             backgroundSize: 'cover',
             backgroundPosition: 'center'
         }}>
