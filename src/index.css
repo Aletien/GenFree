@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Montserrat:wght@400;600;700&display=swap');
 
-/* Light Theme (Default) - Modern Tech Emerald & Slate */
+/* Single Theme - Modern Tech Emerald & Slate */
 :root {
-  /* Emerald & Slate - Modern tech company aesthetic */
+  /* Emerald & Slate - Professional light theme */
   --color-primary: #059669;
   /* Vibrant emerald - growth and innovation */
   --color-primary-light: #10b981;
@@ -11,21 +11,24 @@
   /* Sophisticated slate for contrast */
   --color-accent-light: #64748b;
   /* Lighter slate */
-  --color-bg: #f8fafc;
-  /* Clean light gray background */
-  --color-surface: #ffffff;
-  /* Pure white surfaces */
+  --color-bg: #ffffff;
+  /* Clean white background */
+  --color-surface: #f8fafc;
+  /* Light surfaces */
   --color-text: #0f172a;
   /* Deep slate text */
   --color-text-muted: #64748b;
   /* Slate gray */
   --color-white: #ffffff;
+  --color-black: #000000;
   --color-border: #e2e8f0;
   /* Light slate borders */
   --color-success: #10b981;
   /* Emerald success */
   --color-warning: #f59e0b;
   /* Amber warning */
+  --color-error: #ef4444;
+  /* Red error */
   --color-info: #0ea5e9;
   /* Sky blue info */
 
@@ -36,40 +39,10 @@
   --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.1), 0 2px 4px -2px rgba(15, 23, 42, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -4px rgba(15, 23, 42, 0.1);
   --shadow-glow: 0 0 25px rgba(5, 150, 105, 0.4);
-}
 
-/* Dark Theme - Modern Tech Emerald & Slate */
-[data-theme="dark"] {
-  --color-primary: #10b981;
-  /* Bright emerald for dark theme */
-  --color-primary-light: #34d399;
-  /* Luminous emerald accent */
-  --color-accent: #94a3b8;
-  /* Light slate for contrast */
-  --color-accent-light: #cbd5e1;
-  /* Lighter slate */
-  --color-bg: #0f172a;
-  /* Deep slate background */
-  --color-surface: #1e293b;
-  /* Medium slate surface */
-  --color-text: #f1f5f9;
-  /* Clean white text */
-  --color-text-muted: #94a3b8;
-  /* Muted slate */
-  --color-white: #ffffff;
-  --color-border: #334155;
-  /* Dark slate borders */
-  --color-success: #22c55e;
-  /* Bright emerald success */
-  --color-warning: #fbbf24;
-  /* Bright amber warning */
-  --color-info: #38bdf8;
-  /* Bright sky info */
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.6);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.7);
-  --shadow-glow: 0 0 30px rgba(16, 185, 129, 0.6);
+  /* Set body defaults */
+  color: var(--color-text);
+  background-color: var(--color-bg);
 }
 
 * {
@@ -232,157 +205,16 @@ button {
   }
 }
 
-/* Mobile Content Visibility Fixes */
+/* Simplified Mobile Fixes */
 @media (max-width: 768px) {
-  /* Hide desktop-only elements like Join Events button */
+  /* Hide desktop-only elements */
   .desktop-only {
     display: none !important;
   }
   
-  /* Ensure proper text colors on mobile */
+  /* Basic mobile text visibility */
   body {
-    color: var(--color-text) !important;
-    background-color: var(--color-bg) !important;
-  }
-  
-  /* Mobile subtitle and heading visibility fixes */
-  h1, h2, h3, h4, h5, h6 {
-    color: var(--color-text) !important;
-  }
-  
-  /* Main content areas */
-  .container, main, article, section {
-    color: var(--color-text) !important;
-  }
-  
-  /* Ensure all text elements are visible */
-  span:not([style*="color"]), 
-  div:not([style*="color"]):not([style*="backgroundColor"]), 
-  li:not([style*="color"]),
-  a:not([style*="color"]),
-  text {
-    color: var(--color-text) !important;
-  }
-  
-  /* Force visibility for common content elements */
-  .content, .description, .text {
-    color: var(--color-text) !important;
-  }
-  
-  /* Activity descriptions and content */
-  .activity-description, .event-description {
-    color: var(--color-text) !important;
-  }
-  
-  /* About page content */
-  .about-content p, .about-section p {
-    color: var(--color-text) !important;
-  }
-  
-  /* Specific subtitle fixes */
-  .section-title {
-    color: var(--color-primary) !important;
-  }
-  
-  /* About page subtitle fixes */
-  h2[style*="color: var(--color-accent)"] {
-    color: var(--color-primary) !important;
-  }
-  
-  /* Activities subtitle fixes */
-  h2[style*="color: var(--color-white)"] {
-    color: white !important;
-  }
-  
-  /* Card subtitle fixes */
-  .card h2, .card h3, .card h4 {
-    color: var(--color-primary) !important;
-  }
-  
-  /* Event card subtitles */
-  h3[style*="color: var(--color-primary)"] {
-    color: var(--color-primary) !important;
-  }
-  
-  /* Contact page subtitles */
-  h2[style*="fontSize: '2rem'"] {
-    color: var(--color-primary) !important;
-  }
-  
-  /* EventDetails subtitles */
-  h2[style*="fontSize: '2rem'"][style*="color: var(--color-primary)"] {
-    color: var(--color-primary) !important;
-  }
-  
-  /* Gallery subtitle */
-  h3[style*="fontSize: '1.1rem'"] {
-    color: var(--color-text) !important;
-  }
-  
-  /* General paragraph text - be more specific */
-  p {
-    color: var(--color-text) !important;
-  }
-  
-  /* Exception: Keep white text in hero and styled sections */
-  [style*="color: white"] p,
-  [style*="color: var(--color-white)"] p,
-  [style*="backgroundColor: var(--color-primary)"] p {
-    color: white !important;
-  }
-  
-  /* Navigation text on mobile */
-  .nav-link, .navbar a {
-    color: var(--color-text) !important;
-  }
-  
-  /* Mobile card content */
-  .card {
-    background-color: var(--color-surface) !important;
-    color: var(--color-text) !important;
-  }
-  
-  .card p, .card span, .card div {
-    color: var(--color-text) !important;
-  }
-  
-  /* Activity cards specific styling */
-  .card h3[style*="color:"] {
-    color: var(--color-primary) !important;
-  }
-  
-  /* Mobile button styling */
-  .btn {
-    color: var(--color-white) !important;
-    background-color: var(--color-primary) !important;
-  }
-  
-  /* Ensure hero text stays white on mobile */
-  [style*="color: white"], 
-  [style*="color: rgba(255,255,255"], 
-  .hero h1,
-  .hero p,
-  .hero span,
-  .hero div {
-    color: white !important;
-  }
-  
-  /* Activity card titles on mobile */
-  .activity-card h3 {
-    color: var(--color-primary) !important;
-  }
-  
-  /* Testimonial content */
-  .testimonial h3, .testimonial h4 {
-    color: var(--color-primary) !important;
-  }
-  
-  /* Footer content - keep proper colors */
-  footer h4, footer h3 {
-    color: #f1f5f9 !important;
-  }
-  
-  footer p, footer a {
-    color: #94a3b8 !important;
+    color: var(--color-text);
+    background-color: var(--color-bg);
   }
 }
