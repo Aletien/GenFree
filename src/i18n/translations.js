@@ -9,7 +9,7 @@ export const translations = {
         },
         hero: {
             welcome: 'Welcome to GenFree Network',
-            title: 'Generation Freedom in Christ',
+            title: 'GENFREE',
             subtitle: 'A Spirit-led initiative igniting spiritual passion, restoring identity in Christ, and equipping believers for impact.',
             joinEvents: 'Join Our Events',
             ourStory: 'Our Story',

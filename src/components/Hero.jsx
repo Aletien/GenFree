@@ -83,15 +83,33 @@ const Hero = () => {
                     <h1 style={{
                         fontSize: 'clamp(3rem, 8vw, 7rem)',
                         fontWeight: 900,
-                        marginBottom: '2rem',
+                        marginBottom: '0.5rem',
                         lineHeight: 1,
                         color: 'white',
                         textTransform: 'uppercase',
-                        letterSpacing: '2px',
-                        textShadow: '0 4px 20px rgba(0,0,0,0.5)'
+                        letterSpacing: '4px',
+                        textShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                        fontFamily: '"Arial Black", "Helvetica Neue", Arial, sans-serif',
+                        textStroke: '1px rgba(255,255,255,0.1)',
+                        WebkitTextStroke: '1px rgba(255,255,255,0.1)'
                     }}>
                         {t('hero.title')}
                     </h1>
+
+                    {/* Tagline */}
+                    <div style={{
+                        fontSize: 'clamp(0.9rem, 2vw, 1.2rem)',
+                        fontWeight: 300,
+                        marginBottom: '2.5rem',
+                        color: 'rgba(255,255,255,0.9)',
+                        fontFamily: '"Georgia", "Times New Roman", serif',
+                        fontStyle: 'italic',
+                        letterSpacing: '1px',
+                        textShadow: '0 2px 10px rgba(0,0,0,0.3)',
+                        textAlign: 'center'
+                    }}>
+                        "Am Free In Christ"
+                    </div>
 
                     {/* Subtitle */}
                     <p style={{

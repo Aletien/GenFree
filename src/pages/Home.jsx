@@ -68,7 +68,7 @@ const Home = () => {
             <section style={{ backgroundColor: 'var(--color-white)', padding: '5rem 0' }}>
                 <div className="container" style={{ textAlign: 'center' }}>
                     <FadeIn>
-                        <h2 className="section-title">Join the Movement</h2>
+                        <h2 className="section-title">Join the Network</h2>
                         <p style={{ maxWidth: '700px', margin: '0 auto 2rem', fontSize: '1.1rem', color: 'var(--color-text-muted)' }}>
                             We believe in a generation that is free to lead, free to serve, and free to worship.
                             Connect with us on our social platforms to stay updated with our latest events and content.

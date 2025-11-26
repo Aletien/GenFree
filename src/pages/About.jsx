@@ -36,10 +36,10 @@ const About = () => {
 
                 {/* Why We Exist - Enhanced Design */}
                 <div style={{ 
-                    background: 'linear-gradient(135deg, #060606 0%, #161616 50%, #2D837A 100%)', 
+                    background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 30%, #2D837A 100%)', 
                     borderRadius: '16px', 
                     padding: '4rem 2rem',
-                    color: 'white',
+                    color: '#1e293b',
                     position: 'relative',
                     overflow: 'hidden'
                 }}>
@@ -61,8 +61,8 @@ const About = () => {
                             textAlign: 'center',
                             fontSize: 'clamp(2rem, 4vw, 2.5rem)',
                             fontWeight: 700,
-                            color: 'white',
-                            textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                            color: '#1e293b',
+                            textShadow: '0 2px 4px rgba(255,255,255,0.3)'
                         }}>
                             Why We Exist
                         </h2>
@@ -76,20 +76,23 @@ const About = () => {
                         }}>
                             {/* Gap Bridger */}
                             <div style={{
-                                background: 'rgba(255,255,255,0.1)',
+                                background: 'rgba(255,255,255,0.8)',
                                 backdropFilter: 'blur(10px)',
                                 borderRadius: '12px',
                                 padding: '2rem',
-                                border: '1px solid rgba(255,255,255,0.2)',
-                                transition: 'all 0.3s ease'
+                                border: '1px solid rgba(255,255,255,0.9)',
+                                transition: 'all 0.3s ease',
+                                boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
                             }}
                             onMouseOver={(e) => {
                                 e.currentTarget.style.transform = 'translateY(-5px)';
-                                e.currentTarget.style.background = 'rgba(255,255,255,0.15)';
+                                e.currentTarget.style.background = 'rgba(255,255,255,0.95)';
+                                e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.15)';
                             }}
                             onMouseOut={(e) => {
                                 e.currentTarget.style.transform = 'translateY(0)';
-                                e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                                e.currentTarget.style.background = 'rgba(255,255,255,0.8)';
+                                e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
                             }}>
                                 <div style={{ 
                                     width: '50px', 
@@ -112,7 +115,7 @@ const About = () => {
                                     We are a gap-bridger
                                 </h3>
                                 <p style={{ 
-                                    color: 'rgba(255,255,255,0.9)', 
+                                    color: '#475569', 
                                     fontSize: '1.05rem',
                                     lineHeight: 1.6,
                                     margin: 0
@@ -123,20 +126,23 @@ const About = () => {
 
                             {/* Voice and Space */}
                             <div style={{
-                                background: 'rgba(255,255,255,0.1)',
+                                background: 'rgba(255,255,255,0.8)',
                                 backdropFilter: 'blur(10px)',
                                 borderRadius: '12px',
                                 padding: '2rem',
-                                border: '1px solid rgba(255,255,255,0.2)',
-                                transition: 'all 0.3s ease'
+                                border: '1px solid rgba(255,255,255,0.9)',
+                                transition: 'all 0.3s ease',
+                                boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
                             }}
                             onMouseOver={(e) => {
                                 e.currentTarget.style.transform = 'translateY(-5px)';
-                                e.currentTarget.style.background = 'rgba(255,255,255,0.15)';
+                                e.currentTarget.style.background = 'rgba(255,255,255,0.95)';
+                                e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.15)';
                             }}
                             onMouseOut={(e) => {
                                 e.currentTarget.style.transform = 'translateY(0)';
-                                e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                                e.currentTarget.style.background = 'rgba(255,255,255,0.8)';
+                                e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
                             }}>
                                 <div style={{ 
                                     width: '50px', 
