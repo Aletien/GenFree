@@ -31,7 +31,7 @@ const Navbar = () => {
 
     return (
         <nav style={{
-            backgroundColor: theme === 'dark' ? '#0f172a' : '#000000',
+            backgroundColor: '#020617',
             color: 'white',
             position: 'sticky',
             top: 0,
@@ -224,7 +224,7 @@ const Navbar = () => {
             {/* Mobile Menu Dropdown */}
             {isOpen && (
                 <div style={{
-                    backgroundColor: theme === 'dark' ? '#1e293b' : '#000000',
+                    backgroundColor: '#020617',
                     padding: '1.5rem',
                     borderTop: '1px solid rgba(255,255,255,0.1)'
                 }}>
