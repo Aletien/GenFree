@@ -82,7 +82,7 @@ const MultiPlatformLiveStream = () => {
             icon: '📺',
             color: '#FF0000',
             canEmbed: true,
-            getEmbedUrl: (videoId) => `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=${isMuted ? 1 : 0}`,
+            getEmbedUrl: (videoId) => `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=1&rel=0`,
             getChatUrl: (videoId) => `https://www.youtube.com/live_chat?v=${videoId}&embed_domain=${window.location.hostname}`,
             fallbackUrl: 'https://youtube.com/@YOUR_CHANNEL/live'
         },
@@ -91,7 +91,7 @@ const MultiPlatformLiveStream = () => {
             icon: '📘',
             color: '#1877F2',
             canEmbed: true,
-            getEmbedUrl: (videoId) => `https://www.facebook.com/plugins/video.php?href=https://www.facebook.com/YOUR_PAGE/videos/${videoId}/&width=500&show_text=false&autoplay=true&mute=${isMuted}`,
+            getEmbedUrl: (videoId) => `https://www.facebook.com/plugins/video.php?href=https://www.facebook.com/YOUR_PAGE/videos/${videoId}/&width=500&show_text=false&autoplay=true&mute=false`,
             fallbackUrl: 'https://facebook.com/YOUR_PAGE/live'
         },
         instagram: {

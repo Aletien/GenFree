@@ -14,27 +14,40 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
     const [totalRaised, setTotalRaised] = useState(0);
     const [showThankYou, setShowThankYou] = useState(false);
 
-    // Preset amounts in KES
-    const presetAmounts = [100, 250, 500, 1000, 2500, 5000];
+    // Currency selection
+    const [selectedCurrency, setSelectedCurrency] = useState('UGX');
+    
+    // Preset amounts for different currencies
+    const presetAmounts = {
+        UGX: [2000, 5000, 10000, 20000, 50000, 100000],
+        USD: [1, 5, 10, 25, 50, 100]
+    };
 
     // Sample recent donations
     useEffect(() => {
         const sampleDonations = [
-            { id: 1, name: 'John Mwangi', amount: 1000, message: 'God bless this ministry! 🙏', timestamp: Date.now() - 300000, anonymous: false },
-            { id: 2, name: 'Anonymous', amount: 500, message: 'Praying for the church', timestamp: Date.now() - 240000, anonymous: true },
-            { id: 3, name: 'Mary Grace', amount: 2500, message: 'Thank you for the blessing', timestamp: Date.now() - 180000, anonymous: false },
-            { id: 4, name: 'Peter Kamau', amount: 750, message: 'Keep up the good work!', timestamp: Date.now() - 120000, anonymous: false },
-            { id: 5, name: 'Anonymous', amount: 1500, message: '', timestamp: Date.now() - 60000, anonymous: true }
+            { id: 1, name: 'John Mwangi', amount: 10000, currency: 'UGX', message: 'God bless this ministry! 🙏', timestamp: Date.now() - 300000, anonymous: false },
+            { id: 2, name: 'Anonymous', amount: 5, currency: 'USD', message: 'Praying for the church', timestamp: Date.now() - 240000, anonymous: true },
+            { id: 3, name: 'Mary Grace', amount: 25000, currency: 'UGX', message: 'Thank you for the blessing', timestamp: Date.now() - 180000, anonymous: false },
+            { id: 4, name: 'Peter Kamau', amount: 10, currency: 'USD', message: 'Keep up the good work!', timestamp: Date.now() - 120000, anonymous: false },
+            { id: 5, name: 'Anonymous', amount: 15000, currency: 'UGX', message: '', timestamp: Date.now() - 60000, anonymous: true }
         ];
         setDonations(sampleDonations);
-        setTotalRaised(sampleDonations.reduce((total, donation) => total + donation.amount, 0) + 15000);
+        // Calculate total in UGX equivalent for progress tracking
+        const totalInUGX = sampleDonations.reduce((total, donation) => {
+            const amount = donation.currency === 'USD' ? donation.amount * 3700 : donation.amount; // USD to UGX conversion
+            return total + amount;
+        }, 0) + 50000000; // Starting amount in UGX
+        setTotalRaised(totalInUGX);
     }, []);
 
     // Simulate live donations
     useEffect(() => {
         const interval = setInterval(() => {
             if (Math.random() > 0.85) { // 15% chance every 30 seconds
-                const amounts = [100, 250, 500, 1000];
+                const amounts = { UGX: [2000, 5000, 10000, 20000], USD: [1, 5, 10, 25] };
+                const currencies = ['UGX', 'USD'];
+                const selectedCurr = currencies[Math.floor(Math.random() * currencies.length)];
                 const names = ['Anonymous', 'Grace Wanjiku', 'David Ochieng', 'Sarah Njeri', 'Anonymous'];
                 const messages = [
                     'God bless! 🙏',
@@ -48,14 +61,17 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                 const newDonation = {
                     id: Date.now(),
                     name: names[Math.floor(Math.random() * names.length)],
-                    amount: amounts[Math.floor(Math.random() * amounts.length)],
+                    amount: amounts[selectedCurr][Math.floor(Math.random() * amounts[selectedCurr].length)],
+                    currency: selectedCurr,
                     message: messages[Math.floor(Math.random() * messages.length)],
                     timestamp: Date.now(),
                     anonymous: Math.random() > 0.6
                 };
 
                 setDonations(prev => [newDonation, ...prev.slice(0, 19)]); // Keep last 20
-                setTotalRaised(prev => prev + newDonation.amount);
+                // Convert to UGX for progress tracking
+                const amountInUGX = newDonation.currency === 'USD' ? newDonation.amount * 3700 : newDonation.amount;
+                setTotalRaised(prev => prev + amountInUGX);
             }
         }, 30000);
 
@@ -73,6 +89,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                 id: Date.now(),
                 name: donorName,
                 amount: parseInt(donationAmount),
+                currency: selectedCurrency,
                 message: donorMessage,
                 timestamp: Date.now(),
                 anonymous: false,
@@ -80,13 +97,15 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
             };
 
             setDonations(prev => [newDonation, ...prev]);
-            setTotalRaised(prev => prev + parseInt(donationAmount));
+            // Convert to UGX for progress tracking
+            const amountInUGX = selectedCurrency === 'USD' ? parseInt(donationAmount) * 3700 : parseInt(donationAmount);
+            setTotalRaised(prev => prev + amountInUGX);
             
             // Trigger analytics
             if (window.trackStreamEvent) {
                 window.trackStreamEvent('donation', {
                     amount: parseInt(donationAmount),
-                    currency: 'KES',
+                    currency: selectedCurrency,
                     method: paymentMethod
                 });
             }
@@ -116,11 +135,16 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
         setDonationAmount(amount.toString());
     };
 
-    const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('en-KE', {
+    const formatCurrency = (amount, currency = selectedCurrency) => {
+        const locales = {
+            UGX: 'en-UG',
+            USD: 'en-US'
+        };
+        
+        return new Intl.NumberFormat(locales[currency] || 'en-US', {
             style: 'currency',
-            currency: 'KES',
-            minimumFractionDigits: 0
+            currency: currency,
+            minimumFractionDigits: currency === 'UGX' ? 0 : 2
         }).format(amount);
     };
 
@@ -223,7 +247,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                     }}>
                         <div>
                             <div style={{ fontWeight: 'bold', color: 'var(--color-primary)' }}>
-                                {formatCurrency(totalRaised)}
+                                {formatCurrency(totalRaised, 'UGX')}
                             </div>
                             <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
                                 raised
@@ -231,7 +255,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                         </div>
                         <div style={{ textAlign: 'right' }}>
                             <div style={{ fontWeight: 'bold', color: 'var(--color-text)' }}>
-                                {formatCurrency(campaignGoal)}
+                                {formatCurrency(campaignGoal, 'UGX')}
                             </div>
                             <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
                                 goal
@@ -323,7 +347,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                                         color: 'var(--color-primary)',
                                         fontSize: '0.9rem'
                                     }}>
-                                        {formatCurrency(donation.amount)}
+                                        {formatCurrency(donation.amount, donation.currency)}
                                     </span>
                                 </div>
                                 
@@ -401,6 +425,50 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                             💝 Make a Donation
                         </h3>
 
+                        {/* Currency Selection */}
+                        <div style={{ marginBottom: '1rem' }}>
+                            <label style={{
+                                display: 'block',
+                                marginBottom: '0.5rem',
+                                fontWeight: 'bold',
+                                color: 'var(--color-text)'
+                            }}>
+                                Currency
+                            </label>
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <button
+                                    onClick={() => setSelectedCurrency('UGX')}
+                                    style={{
+                                        flex: 1,
+                                        padding: '0.75rem',
+                                        backgroundColor: selectedCurrency === 'UGX' ? 'var(--color-primary)' : 'var(--color-bg)',
+                                        color: selectedCurrency === 'UGX' ? 'white' : 'var(--color-text)',
+                                        border: '1px solid var(--color-border)',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600'
+                                    }}
+                                >
+                                    🇺🇬 UGX (Ugandan Shilling)
+                                </button>
+                                <button
+                                    onClick={() => setSelectedCurrency('USD')}
+                                    style={{
+                                        flex: 1,
+                                        padding: '0.75rem',
+                                        backgroundColor: selectedCurrency === 'USD' ? 'var(--color-primary)' : 'var(--color-bg)',
+                                        color: selectedCurrency === 'USD' ? 'white' : 'var(--color-text)',
+                                        border: '1px solid var(--color-border)',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: '600'
+                                    }}
+                                >
+                                    🇺🇸 USD (US Dollar)
+                                </button>
+                            </div>
+                        </div>
+
                         {/* Amount Selection */}
                         <div style={{ marginBottom: '1.5rem' }}>
                             <label style={{
@@ -409,7 +477,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                                 fontWeight: 'bold',
                                 color: 'var(--color-text)'
                             }}>
-                                Select Amount (KES)
+                                Select Amount ({selectedCurrency})
                             </label>
                             
                             <div style={{
@@ -418,7 +486,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                                 gap: '0.5rem',
                                 marginBottom: '1rem'
                             }}>
-                                {presetAmounts.map((amount) => (
+                                {presetAmounts[selectedCurrency].map((amount) => (
                                     <button
                                         key={amount}
                                         onClick={() => handlePresetAmount(amount)}
@@ -432,7 +500,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                                             fontWeight: '600'
                                         }}
                                     >
-                                        {formatCurrency(amount)}
+                                        {formatCurrency(amount, selectedCurrency)}
                                     </button>
                                 ))}
                             </div>
@@ -590,7 +658,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                             ) : (
                                 <>
                                     <DollarSign size={20} />
-                                    Donate {donationAmount && formatCurrency(parseInt(donationAmount))}
+                                    Donate {donationAmount && formatCurrency(parseInt(donationAmount), selectedCurrency)}
                                 </>
                             )}
                         </button>
