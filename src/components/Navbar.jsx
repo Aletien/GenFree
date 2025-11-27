@@ -16,7 +16,8 @@ const Navbar = () => {
         { name: t('nav.about'), path: '/about' },
         { name: t('nav.activities'), path: '/activities' },
         { name: t('nav.events'), path: '/events' },
-        { name: t('nav.contact'), path: '/contact' },
+        { name: '🔴 Live', path: '/live' },
+        { name: t('nav.contact'), path: '/contact' }
     ];
 
     const languages = [

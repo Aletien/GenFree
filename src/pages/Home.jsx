@@ -3,6 +3,7 @@ import ActivityCard from '../components/ActivityCard';
 import GallerySection from '../components/GallerySection';
 import FadeIn from '../components/FadeIn';
 import Testimonials from '../components/Testimonials';
+import SocialMediaIntegration from '../components/SocialMediaIntegration';
 import { Heart, Users, Music } from 'lucide-react';
 
 const Home = () => {
@@ -65,6 +66,10 @@ const Home = () => {
 
             <Testimonials />
 
+            <FadeIn>
+                <SocialMediaIntegration showLiveIndicators={true} />
+            </FadeIn>
+
             <section style={{ backgroundColor: 'var(--color-white)', padding: '5rem 0' }}>
                 <div className="container" style={{ textAlign: 'center' }}>
                     <FadeIn>
@@ -75,6 +80,7 @@ const Home = () => {
                         </p>
                         <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
                             <a href="/contact" className="btn btn-primary">Get Involved</a>
+                            <a href="/live" className="btn btn-secondary">Watch Live</a>
                         </div>
                     </FadeIn>
                 </div>
