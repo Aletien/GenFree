@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Sun, Moon, Globe, Search } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
@@ -7,6 +7,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [showLangMenu, setShowLangMenu] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
     const { theme, toggleTheme } = useTheme();
     const { language, changeLanguage, t } = useLanguage();
     const location = useLocation();
@@ -29,14 +30,28 @@ const Navbar = () => {
 
     const currentLang = languages.find(lang => lang.code === language);
 
+    // Handle scroll effect
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollTop = window.scrollY;
+            setIsScrolled(scrollTop > 100);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     return (
         <nav style={{
-            backgroundColor: '#f8fafc',
+            backgroundColor: isScrolled ? 'rgba(248, 250, 252, 0.95)' : '#f8fafc',
             color: '#1f2937',
             position: 'sticky',
             top: 0,
             zIndex: 1000,
-            borderBottom: '1px solid #e5e7eb'
+            borderBottom: isScrolled ? '1px solid rgba(229, 231, 235, 0.8)' : '1px solid #e5e7eb',
+            backdropFilter: isScrolled ? 'blur(10px)' : 'none',
+            transition: 'all 0.3s ease-in-out',
+            boxShadow: isScrolled ? '0 2px 20px rgba(0, 0, 0, 0.1)' : 'none'
         }}>
             <div className="container" style={{
                 display: 'flex',
@@ -224,9 +239,10 @@ const Navbar = () => {
             {/* Mobile Menu Dropdown */}
             {isOpen && (
                 <div style={{
-                    backgroundColor: '#f8fafc',
+                    backgroundColor: isScrolled ? 'rgba(248, 250, 252, 0.95)' : '#f8fafc',
                     padding: '1.5rem',
-                    borderTop: '1px solid #e5e7eb'
+                    borderTop: isScrolled ? '1px solid rgba(229, 231, 235, 0.8)' : '1px solid #e5e7eb',
+                    backdropFilter: isScrolled ? 'blur(10px)' : 'none'
                 }}>
                     {navLinks.map((link) => {
                         const isActive = location.pathname === link.path;
