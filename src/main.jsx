@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { HashRouter } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
 import { ThemeProvider } from './contexts/ThemeContext'
@@ -10,9 +10,9 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider>
       <LanguageProvider>
-        <HashRouter>
+        <BrowserRouter>
           <App />
-        </HashRouter>
+        </BrowserRouter>
       </LanguageProvider>
     </ThemeProvider>
   </StrictMode>,

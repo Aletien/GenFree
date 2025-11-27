@@ -1,0 +1,16 @@
+{
+  "name": "GenFree Network",
+  "short_name": "GenFree",
+  "description": "A spirit-led initiative transforming lives for God's glory",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#059669",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
