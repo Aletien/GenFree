@@ -21,6 +21,11 @@ const MultiPlatformLiveStream = () => {
     const [hasLiked, setHasLiked] = useState({});
     const [recordings, setRecordings] = useState([]);
     const [showShareModal, setShowShareModal] = useState(false);
+    const [showScheduleModal, setShowScheduleModal] = useState(false);
+    const [favorites, setFavorites] = useState([]);
+    const [notifications, setNotifications] = useState(false);
+    const [quality, setQuality] = useState('auto');
+    const [fullscreen, setFullscreen] = useState(false);
 
     // Platform configurations with embed support
     const platformConfigs = {
@@ -141,6 +146,63 @@ const MultiPlatformLiveStream = () => {
             telegram: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`
         };
         window.open(shareUrls[platform], '_blank');
+    };
+
+    const toggleFavorite = (recordingId) => {
+        setFavorites(prev => 
+            prev.includes(recordingId)
+                ? prev.filter(id => id !== recordingId)
+                : [...prev, recordingId]
+        );
+    };
+
+    const toggleNotifications = async () => {
+        if (!notifications) {
+            if ('Notification' in window) {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    setNotifications(true);
+                    new Notification('🔔 Live Stream Notifications Enabled', {
+                        body: 'You\'ll be notified when we go live!',
+                        icon: '/logo.svg'
+                    });
+                }
+            }
+        } else {
+            setNotifications(false);
+        }
+    };
+
+    const setReminder = (service) => {
+        if ('Notification' in window && Notification.permission === 'granted') {
+            // Calculate time until service
+            const serviceDate = new Date(service.date + ' ' + service.time);
+            const now = new Date();
+            const timeDiff = serviceDate.getTime() - now.getTime();
+            
+            if (timeDiff > 0) {
+                // Set reminder 15 minutes before
+                setTimeout(() => {
+                    new Notification('🔴 Live Stream Starting Soon!', {
+                        body: `${service.title} starts in 15 minutes`,
+                        icon: '/logo.svg'
+                    });
+                }, Math.max(0, timeDiff - 15 * 60 * 1000));
+                
+                alert(`✅ Reminder set for ${service.title}`);
+            }
+        } else {
+            alert('Please enable notifications first');
+        }
+    };
+
+    const toggleFullscreen = () => {
+        if (!fullscreen) {
+            document.documentElement.requestFullscreen?.();
+        } else {
+            document.exitFullscreen?.();
+        }
+        setFullscreen(!fullscreen);
     };
 
     const renderPlatformSelector = () => (
@@ -636,6 +698,38 @@ const MultiPlatformLiveStream = () => {
                         >
                             <Share2 size={14} /> Share
                         </button>
+                        <button
+                            onClick={toggleNotifications}
+                            style={{
+                                padding: '0.5rem 1rem',
+                                backgroundColor: notifications ? '#00C851' : 'var(--color-accent)',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem'
+                            }}
+                        >
+                            🔔 {notifications ? 'Notifications On' : 'Enable Notifications'}
+                        </button>
+                        <button
+                            onClick={() => setShowScheduleModal(true)}
+                            style={{
+                                padding: '0.5rem 1rem',
+                                backgroundColor: 'var(--color-info)',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem'
+                            }}
+                        >
+                            📅 Schedule
+                        </button>
                     </div>
                 </motion.div>
 
@@ -760,6 +854,20 @@ const MultiPlatformLiveStream = () => {
                                                 }}
                                             >
                                                 <Play size={14} /> Watch
+                                            </button>
+                                            
+                                            <button
+                                                onClick={() => toggleFavorite(recording.id)}
+                                                style={{
+                                                    padding: '0.5rem',
+                                                    backgroundColor: favorites.includes(recording.id) ? '#FFD700' : 'var(--color-warning)',
+                                                    color: favorites.includes(recording.id) ? '#000' : 'white',
+                                                    border: 'none',
+                                                    borderRadius: '4px',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                {favorites.includes(recording.id) ? '⭐' : '☆'}
                                             </button>
                                             
                                             <button
@@ -937,6 +1045,171 @@ const MultiPlatformLiveStream = () => {
                             >
                                 ✈️ Telegram
                             </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Schedule Modal */}
+            {showScheduleModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000
+                }}>
+                    <div style={{
+                        backgroundColor: 'white',
+                        borderRadius: '12px',
+                        padding: '2rem',
+                        maxWidth: '500px',
+                        width: '90%',
+                        maxHeight: '80vh',
+                        overflowY: 'auto',
+                        position: 'relative'
+                    }}>
+                        <button
+                            onClick={() => setShowScheduleModal(false)}
+                            style={{
+                                position: 'absolute',
+                                top: '1rem',
+                                right: '1rem',
+                                background: 'none',
+                                border: 'none',
+                                fontSize: '1.5rem',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            ×
+                        </button>
+                        
+                        <h3 style={{ marginBottom: '1.5rem', color: 'var(--color-primary)' }}>
+                            📅 Upcoming Live Streams
+                        </h3>
+                        
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            {[
+                                {
+                                    title: 'Sunday Worship Service',
+                                    date: '2024-01-28',
+                                    time: '10:00 AM',
+                                    platform: 'YouTube & Facebook',
+                                    description: 'Join us for our weekly worship service'
+                                },
+                                {
+                                    title: 'Midweek Prayer Meeting',
+                                    date: '2024-01-31',
+                                    time: '7:00 PM',
+                                    platform: 'YouTube Live',
+                                    description: 'Corporate prayer and worship time'
+                                },
+                                {
+                                    title: 'Youth Night',
+                                    date: '2024-02-02',
+                                    time: '6:30 PM',
+                                    platform: 'Instagram & TikTok',
+                                    description: 'Special youth worship session'
+                                }
+                            ].map((service, index) => (
+                                <div
+                                    key={index}
+                                    style={{
+                                        padding: '1rem',
+                                        backgroundColor: 'var(--color-bg)',
+                                        borderRadius: '8px',
+                                        border: '1px solid var(--color-border)'
+                                    }}
+                                >
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'flex-start',
+                                        marginBottom: '0.5rem'
+                                    }}>
+                                        <h4 style={{
+                                            margin: 0,
+                                            color: 'var(--color-primary)',
+                                            fontSize: '1rem'
+                                        }}>
+                                            {service.title}
+                                        </h4>
+                                        <span style={{
+                                            backgroundColor: 'var(--color-primary)',
+                                            color: 'white',
+                                            padding: '0.25rem 0.5rem',
+                                            borderRadius: '12px',
+                                            fontSize: '0.7rem'
+                                        }}>
+                                            {service.platform}
+                                        </span>
+                                    </div>
+                                    
+                                    <p style={{
+                                        margin: '0 0 0.75rem 0',
+                                        color: 'var(--color-text-muted)',
+                                        fontSize: '0.9rem'
+                                    }}>
+                                        {service.description}
+                                    </p>
+                                    
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center'
+                                    }}>
+                                        <span style={{
+                                            color: 'var(--color-text)',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            📅 {service.date} at {service.time}
+                                        </span>
+                                        
+                                        <button
+                                            onClick={() => {
+                                                setReminder(service);
+                                                setShowScheduleModal(false);
+                                            }}
+                                            style={{
+                                                padding: '0.5rem 1rem',
+                                                backgroundColor: 'var(--color-primary)',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '6px',
+                                                cursor: 'pointer',
+                                                fontSize: '0.8rem',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.5rem'
+                                            }}
+                                        >
+                                            🔔 Set Reminder
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        
+                        <div style={{
+                            marginTop: '1.5rem',
+                            padding: '1rem',
+                            backgroundColor: 'var(--color-info-bg)',
+                            borderRadius: '8px',
+                            textAlign: 'center'
+                        }}>
+                            <p style={{
+                                margin: 0,
+                                fontSize: '0.9rem',
+                                color: 'var(--color-text-muted)'
+                            }}>
+                                💡 Enable notifications to get alerts 15 minutes before each service starts
+                            </p>
                         </div>
                     </div>
                 </div>
