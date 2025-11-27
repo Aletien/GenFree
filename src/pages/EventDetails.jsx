@@ -8,6 +8,34 @@ const EventDetails = () => {
     const navigate = useNavigate();
     const [selectedImage, setSelectedImage] = useState(null);
 
+    const handleGoogleFormRegistration = () => {
+        // Google Form URL with pre-filled event information
+        const formUrl = `https://forms.gle/YOUR_FORM_ID?usp=pp_url&entry.1234567890=${encodeURIComponent(event.title)}&entry.0987654321=${encodeURIComponent(event.date)}&entry.1122334455=${encodeURIComponent(event.time)}`;
+        window.open(formUrl, '_blank');
+    };
+
+    const handleWhatsAppRegistration = () => {
+        const message = `Hello GenFree Network! 🙏
+
+I would like to register for the following event:
+
+📅 *Event:* ${event.title}
+🗓️ *Date:* ${event.date}
+⏰ *Time:* ${event.time}
+📍 *Location:* ${event.location}
+
+*My Details:*
+• Name: [Please enter your full name]
+• Phone: [Your phone number]
+• Email: [Your email address]
+• Special Requirements: [Any dietary restrictions, accessibility needs, or questions]
+
+Thank you! Looking forward to this event. 🎉`;
+        
+        const whatsappNumber = '256700000000'; // Update with your Uganda number
+        window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
+    };
+
     // Mock event data - in real app, fetch by slug
     const eventsData = {
         'annual-worship-night': {
@@ -239,51 +267,111 @@ const EventDetails = () => {
                     {/* Right Column - Registration */}
                     <div>
                         <div className="card" style={{ position: 'sticky', top: '6rem' }}>
-                            <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', color: 'var(--color-primary)' }}>Register Now</h3>
-                            <form onSubmit={handleSubmit}>
-                                <div style={{ marginBottom: '1rem' }}>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Full Name *</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
-                                    />
-                                </div>
+                            <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', color: 'var(--color-primary)' }}>Register for This Event</h3>
+                            
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                <p style={{ color: 'var(--color-text-muted)', textAlign: 'center', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                    Choose your preferred registration method:
+                                </p>
 
-                                <div style={{ marginBottom: '1rem' }}>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Email *</label>
-                                    <input
-                                        type="email"
-                                        required
-                                        style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
-                                    />
-                                </div>
-
-                                <div style={{ marginBottom: '1rem' }}>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Phone Number *</label>
-                                    <input
-                                        type="tel"
-                                        required
-                                        style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
-                                    />
-                                </div>
-
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Additional Notes</label>
-                                    <textarea
-                                        rows="3"
-                                        style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', resize: 'vertical' }}
-                                    />
-                                </div>
-
+                                {/* Google Form Registration */}
                                 <button
-                                    type="submit"
-                                    className="btn btn-primary"
-                                    style={{ width: '100%', padding: '0.75rem' }}
+                                    onClick={handleGoogleFormRegistration}
+                                    style={{
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        border: '2px solid var(--color-primary)',
+                                        backgroundColor: 'var(--color-primary)',
+                                        color: 'white',
+                                        fontSize: '1rem',
+                                        fontWeight: '600',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '0.5rem'
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = 'var(--shadow-md)';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}
                                 >
-                                    Submit Registration
+                                    📝 Register via Online Form
                                 </button>
-                            </form>
+
+                                <div style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
+                                    — or —
+                                </div>
+
+                                {/* WhatsApp Registration */}
+                                <button
+                                    onClick={handleWhatsAppRegistration}
+                                    style={{
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        border: '2px solid #25D366',
+                                        backgroundColor: '#25D366',
+                                        color: 'white',
+                                        fontSize: '1rem',
+                                        fontWeight: '600',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '0.5rem'
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = 'var(--shadow-md)';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}
+                                >
+                                    📱 Register via WhatsApp
+                                </button>
+
+                                <div style={{ 
+                                    marginTop: '0.5rem', 
+                                    padding: '0.75rem', 
+                                    backgroundColor: '#f0f9ff', 
+                                    borderRadius: '6px', 
+                                    border: '1px solid #bae6fd' 
+                                }}>
+                                    <h4 style={{ color: 'var(--color-primary)', marginBottom: '0.5rem', fontSize: '0.85rem' }}>
+                                        📋 Registration is FREE!
+                                    </h4>
+                                    <ul style={{ margin: 0, paddingLeft: '1.25rem', color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
+                                        <li><strong>Online Form:</strong> Instant confirmation</li>
+                                        <li><strong>WhatsApp:</strong> Direct communication</li>
+                                        <li>Confirmation within 24 hours</li>
+                                        <li>Bring valid ID on event day</li>
+                                    </ul>
+                                </div>
+
+                                <div style={{ 
+                                    marginTop: '0.5rem', 
+                                    padding: '0.75rem', 
+                                    backgroundColor: 'var(--color-surface)', 
+                                    borderRadius: '6px', 
+                                    borderLeft: '3px solid var(--color-primary)' 
+                                }}>
+                                    <h4 style={{ color: 'var(--color-primary)', marginBottom: '0.5rem', fontSize: '0.85rem' }}>
+                                        📞 Need Help?
+                                    </h4>
+                                    <p style={{ margin: 0, color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
+                                        Questions about this event? Contact us directly via WhatsApp or visit our 
+                                        <Link to="/contact" style={{ color: 'var(--color-primary)', textDecoration: 'none' }}> contact page</Link>.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
