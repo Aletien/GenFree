@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Sun, Moon, Globe, Search } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -9,6 +9,7 @@ const Navbar = () => {
     const [showLangMenu, setShowLangMenu] = useState(false);
     const { theme, toggleTheme } = useTheme();
     const { language, changeLanguage, t } = useLanguage();
+    const location = useLocation();
 
     const navLinks = [
         { name: t('nav.home'), path: '/' },
@@ -56,31 +57,39 @@ const Navbar = () => {
                     left: '50%',
                     transform: 'translateX(-50%)'
                 }} className="desktop-menu">
-                    {navLinks.map((link) => (
-                        <Link
-                            key={link.name}
-                            to={link.path}
-                            style={{
-                                color: 'white',
-                                textDecoration: 'none',
-                                fontSize: '0.9rem',
-                                fontWeight: 500,
-                                textTransform: 'uppercase',
-                                letterSpacing: '1px',
-                                transition: 'color 0.3s',
-                                position: 'relative',
-                                padding: '0.5rem 0'
-                            }}
-                            onMouseOver={(e) => {
-                                e.currentTarget.style.color = 'var(--color-accent)';
-                            }}
-                            onMouseOut={(e) => {
-                                e.currentTarget.style.color = 'white';
-                            }}
-                        >
-                            {link.name}
-                        </Link>
-                    ))}
+                    {navLinks.map((link) => {
+                        const isActive = location.pathname === link.path;
+                        return (
+                            <Link
+                                key={link.name}
+                                to={link.path}
+                                style={{
+                                    color: isActive ? 'var(--color-primary)' : 'white',
+                                    textDecoration: 'none',
+                                    fontSize: '0.9rem',
+                                    fontWeight: isActive ? 600 : 500,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '1px',
+                                    transition: 'all 0.3s',
+                                    position: 'relative',
+                                    padding: '0.5rem 0',
+                                    borderBottom: isActive ? '2px solid var(--color-primary)' : '2px solid transparent'
+                                }}
+                                onMouseOver={(e) => {
+                                    if (!isActive) {
+                                        e.currentTarget.style.color = 'var(--color-primary)';
+                                    }
+                                }}
+                                onMouseOut={(e) => {
+                                    if (!isActive) {
+                                        e.currentTarget.style.color = 'white';
+                                    }
+                                }}
+                            >
+                                {link.name}
+                            </Link>
+                        );
+                    })}
                 </div>
 
                 {/* Right Side Actions */}
@@ -218,24 +227,31 @@ const Navbar = () => {
                     padding: '1.5rem',
                     borderTop: '1px solid rgba(255,255,255,0.1)'
                 }}>
-                    {navLinks.map((link) => (
-                        <Link
-                            key={link.name}
-                            to={link.path}
-                            onClick={() => setIsOpen(false)}
-                            style={{
-                                display: 'block',
-                                padding: '1rem 0',
-                                color: 'white',
-                                textDecoration: 'none',
-                                fontSize: '1rem',
-                                fontWeight: 500,
-                                borderBottom: '1px solid rgba(255,255,255,0.1)'
-                            }}
-                        >
-                            {link.name}
-                        </Link>
-                    ))}
+                    {navLinks.map((link) => {
+                        const isActive = location.pathname === link.path;
+                        return (
+                            <Link
+                                key={link.name}
+                                to={link.path}
+                                onClick={() => setIsOpen(false)}
+                                style={{
+                                    display: 'block',
+                                    padding: '1rem 0',
+                                    color: isActive ? 'var(--color-primary)' : 'white',
+                                    textDecoration: 'none',
+                                    fontSize: '1rem',
+                                    fontWeight: isActive ? 600 : 500,
+                                    borderBottom: '1px solid rgba(255,255,255,0.1)',
+                                    backgroundColor: isActive ? 'rgba(5, 150, 105, 0.1)' : 'transparent',
+                                    paddingLeft: isActive ? '1rem' : '0',
+                                    borderLeft: isActive ? '3px solid var(--color-primary)' : '3px solid transparent',
+                                    transition: 'all 0.3s'
+                                }}
+                            >
+                                {link.name}
+                            </Link>
+                        );
+                    })}
                 </div>
             )}
 
