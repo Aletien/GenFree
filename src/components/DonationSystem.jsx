@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useFlutterwave, closePaymentModal } from 'flutterwave-react-v3';
 import { Heart, Gift, DollarSign, CreditCard, Smartphone, Building, Target, Users, Star } from 'lucide-react';
 
 const DonationSystem = ({ streamId, onDonationComplete }) => {
@@ -16,7 +17,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
 
     // Currency selection
     const [selectedCurrency, setSelectedCurrency] = useState('UGX');
-    
+
     // Preset amounts for different currencies
     const presetAmounts = {
         UGX: [2000, 5000, 10000, 20000, 50000, 100000],
@@ -78,56 +79,85 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
         return () => clearInterval(interval);
     }, []);
 
-    const handleDonationSubmit = async () => {
+    const config = {
+        public_key: import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY,
+        tx_ref: Date.now(),
+        amount: parseInt(donationAmount),
+        currency: selectedCurrency,
+        payment_options: 'card,mobilemoney,ussd',
+        customer: {
+            email: 'user@example.com', // In a real app, you'd ask for email
+            phone_number: '0700000000', // In a real app, you'd ask for phone
+            name: donorName,
+        },
+        customizations: {
+            title: 'GenFree Ministry Donation',
+            description: donorMessage || 'Support for ministry work',
+            logo: 'https://st2.depositphotos.com/4403291/7418/v/450/depositphotos_74189661-stock-illustration-online-shop-log.jpg',
+        },
+    };
+
+    const handleFlutterwavePayment = useFlutterwave(config);
+
+    const handleDonationSubmit = () => {
         if (!donationAmount || !donorName.trim()) return;
 
         setIsProcessing(true);
 
-        // Simulate payment processing
-        setTimeout(() => {
-            const newDonation = {
-                id: Date.now(),
-                name: donorName,
-                amount: parseInt(donationAmount),
-                currency: selectedCurrency,
-                message: donorMessage,
-                timestamp: Date.now(),
-                anonymous: false,
-                isOwn: true
-            };
+        handleFlutterwavePayment({
+            callback: (response) => {
+                console.log(response);
+                closePaymentModal(); // this will close the modal programmatically
 
-            setDonations(prev => [newDonation, ...prev]);
-            // Convert to UGX for progress tracking
-            const amountInUGX = selectedCurrency === 'USD' ? parseInt(donationAmount) * 3700 : parseInt(donationAmount);
-            setTotalRaised(prev => prev + amountInUGX);
-            
-            // Trigger analytics
-            if (window.trackStreamEvent) {
-                window.trackStreamEvent('donation', {
-                    amount: parseInt(donationAmount),
-                    currency: selectedCurrency,
-                    method: paymentMethod
-                });
-            }
+                if (response.status === "successful") {
+                    const newDonation = {
+                        id: response.transaction_id,
+                        name: donorName,
+                        amount: parseInt(donationAmount),
+                        currency: selectedCurrency,
+                        message: donorMessage,
+                        timestamp: Date.now(),
+                        anonymous: false,
+                        isOwn: true
+                    };
 
-            setIsProcessing(false);
-            setShowDonationModal(false);
-            setShowThankYou(true);
+                    setDonations(prev => [newDonation, ...prev]);
+                    // Convert to UGX for progress tracking
+                    const amountInUGX = selectedCurrency === 'USD' ? parseInt(donationAmount) * 3700 : parseInt(donationAmount);
+                    setTotalRaised(prev => prev + amountInUGX);
 
-            // Reset form
-            setDonationAmount('');
-            setSelectedAmount(null);
-            setDonorName('');
-            setDonorMessage('');
+                    // Trigger analytics
+                    if (window.trackStreamEvent) {
+                        window.trackStreamEvent('donation', {
+                            amount: parseInt(donationAmount),
+                            currency: selectedCurrency,
+                            method: 'flutterwave'
+                        });
+                    }
 
-            // Call callback
-            if (onDonationComplete) {
-                onDonationComplete(newDonation);
-            }
+                    setShowDonationModal(false);
+                    setShowThankYou(true);
 
-            // Hide thank you after 5 seconds
-            setTimeout(() => setShowThankYou(false), 5000);
-        }, 2000);
+                    // Reset form
+                    setDonationAmount('');
+                    setSelectedAmount(null);
+                    setDonorName('');
+                    setDonorMessage('');
+
+                    // Call callback
+                    if (onDonationComplete) {
+                        onDonationComplete(newDonation);
+                    }
+
+                    // Hide thank you after 5 seconds
+                    setTimeout(() => setShowThankYou(false), 5000);
+                }
+                setIsProcessing(false);
+            },
+            onClose: () => {
+                setIsProcessing(false);
+            },
+        });
     };
 
     const handlePresetAmount = (amount) => {
@@ -140,7 +170,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
             UGX: 'en-UG',
             USD: 'en-US'
         };
-        
+
         return new Intl.NumberFormat(locales[currency] || 'en-US', {
             style: 'currency',
             currency: currency,
@@ -151,7 +181,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
     const formatTime = (timestamp) => {
         const now = Date.now();
         const diff = now - timestamp;
-        
+
         if (diff < 60000) return 'Just now';
         if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
         if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
@@ -223,7 +253,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                             {getProgressPercentage().toFixed(1)}%
                         </span>
                     </div>
-                    
+
                     <div style={{
                         width: '100%',
                         height: '12px',
@@ -239,7 +269,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                             transition: 'width 0.5s ease'
                         }} />
                     </div>
-                    
+
                     <div style={{
                         display: 'flex',
                         justifyContent: 'space-between',
@@ -301,7 +331,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                         <Users size={16} />
                         Recent Donations
                     </h4>
-                    
+
                     <div style={{
                         maxHeight: '200px',
                         overflowY: 'auto',
@@ -328,7 +358,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                                         color: '#FFD700'
                                     }} />
                                 )}
-                                
+
                                 <div style={{
                                     display: 'flex',
                                     justifyContent: 'space-between',
@@ -350,7 +380,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                                         {formatCurrency(donation.amount, donation.currency)}
                                     </span>
                                 </div>
-                                
+
                                 {donation.message && (
                                     <p style={{
                                         margin: '0 0 0.25rem 0',
@@ -361,7 +391,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                                         "{donation.message}"
                                     </p>
                                 )}
-                                
+
                                 <div style={{
                                     fontSize: '0.7rem',
                                     color: 'var(--color-text-muted)',
@@ -479,7 +509,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                             }}>
                                 Select Amount ({selectedCurrency})
                             </label>
-                            
+
                             <div style={{
                                 display: 'grid',
                                 gridTemplateColumns: 'repeat(3, 1fr)',
@@ -504,7 +534,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                                     </button>
                                 ))}
                             </div>
-                            
+
                             <input
                                 type="number"
                                 placeholder="Enter custom amount"

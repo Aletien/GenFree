@@ -1,6 +1,5 @@
 {
   "name": "genfree",
-  "homepage": "https://aletien.github.io/GenFree/",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -13,6 +12,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "flutterwave-react-v3": "^1.3.2",
     "framer-motion": "^12.23.24",
     "gh-pages": "^6.3.0",
     "lucide-react": "^0.554.0",
