@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useFlutterwave, closePaymentModal } from 'flutterwave-react-v3';
-import { Heart, Gift, DollarSign, CreditCard, Smartphone, Building, Target, Users, Star } from 'lucide-react';
+import { Heart, Gift, DollarSign, Target, Users, Star } from 'lucide-react';
 
 const DonationSystem = ({ streamId, onDonationComplete }) => {
     const [showDonationModal, setShowDonationModal] = useState(false);
@@ -8,7 +8,6 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
     const [selectedAmount, setSelectedAmount] = useState(null);
     const [donorName, setDonorName] = useState('');
     const [donorMessage, setDonorMessage] = useState('');
-    const [paymentMethod, setPaymentMethod] = useState('mobile');
     const [isProcessing, setIsProcessing] = useState(false);
     const [donations, setDonations] = useState([]);
     const [campaignGoal, setCampaignGoal] = useState(50000);
@@ -198,11 +197,6 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
         return Math.min((totalRaised / campaignGoal) * 100, 100);
     };
 
-    const paymentMethods = {
-        mobile: { name: 'M-Pesa/Airtel Money', icon: <Smartphone size={18} />, popular: true },
-        card: { name: 'Credit/Debit Card', icon: <CreditCard size={18} />, popular: false },
-        bank: { name: 'Bank Transfer', icon: <Building size={18} />, popular: false }
-    };
 
     return (
         <>
@@ -610,51 +604,35 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                             />
                         </div>
 
-                        {/* Payment Method */}
+                        {/* Payment Info */}
                         <div style={{ marginBottom: '1.5rem' }}>
-                            <label style={{
-                                display: 'block',
-                                marginBottom: '0.5rem',
-                                fontWeight: 'bold',
-                                color: 'var(--color-text)'
+                            <div style={{
+                                backgroundColor: 'var(--color-bg)',
+                                padding: '1rem',
+                                borderRadius: '8px',
+                                border: '1px solid var(--color-border)'
                             }}>
-                                Payment Method
-                            </label>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                {Object.entries(paymentMethods).map(([key, method]) => (
-                                    <button
-                                        key={key}
-                                        onClick={() => setPaymentMethod(key)}
-                                        style={{
-                                            padding: '0.75rem',
-                                            backgroundColor: paymentMethod === key ? 'var(--color-primary)' : 'var(--color-bg)',
-                                            color: paymentMethod === key ? 'white' : 'var(--color-text)',
-                                            border: '1px solid var(--color-border)',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '0.5rem',
-                                            justifyContent: 'space-between'
-                                        }}
-                                    >
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                            {method.icon}
-                                            {method.name}
-                                        </div>
-                                        {method.popular && (
-                                            <span style={{
-                                                fontSize: '0.7rem',
-                                                backgroundColor: '#00C851',
-                                                color: 'white',
-                                                padding: '0.25rem 0.5rem',
-                                                borderRadius: '12px'
-                                            }}>
-                                                Popular
-                                            </span>
-                                        )}
-                                    </button>
-                                ))}
+                                <h4 style={{
+                                    margin: '0 0 0.5rem 0',
+                                    color: 'var(--color-primary)',
+                                    fontSize: '1rem'
+                                }}>
+                                    💳 Secure Payment via Flutterwave
+                                </h4>
+                                <div style={{
+                                    fontSize: '0.9rem',
+                                    color: 'var(--color-text-muted)',
+                                    lineHeight: '1.5'
+                                }}>
+                                    <p style={{ margin: '0 0 0.5rem 0' }}>
+                                        ✅ Mobile Money (M-Pesa, Airtel Money)<br/>
+                                        ✅ Credit/Debit Cards (Visa, Mastercard)<br/>
+                                        ✅ Bank Transfers & USSD
+                                    </p>
+                                    <p style={{ margin: '0', fontSize: '0.8rem', fontStyle: 'italic' }}>
+                                        Choose your preferred payment method on the next screen
+                                    </p>
+                                </div>
                             </div>
                         </div>
 
@@ -694,7 +672,7 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
                             ) : (
                                 <>
                                     <DollarSign size={20} />
-                                    Donate {donationAmount && formatCurrency(parseInt(donationAmount), selectedCurrency)}
+                                    Proceed to Payment {donationAmount && `- ${formatCurrency(parseInt(donationAmount), selectedCurrency)}`}
                                 </>
                             )}
                         </button>
