@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Users, MessageCircle, Share2, Volume2, VolumeX, Maximize, Calendar, ExternalLink, Heart, ThumbsUp, Download, Copy } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useLiveStatus } from '../hooks/useLiveStatus';
+import ChatSystem from './ChatSystem';
+import AnalyticsTracker from './AnalyticsTracker';
+import DonationSystem from './DonationSystem';
 
 const MultiPlatformLiveStream = () => {
     const { t } = useLanguage();
@@ -484,77 +487,6 @@ const MultiPlatformLiveStream = () => {
         );
     };
 
-    const renderChatSection = () => {
-        const selectedConfig = platformConfigs[selectedPlatform];
-        const platformData = platforms[selectedPlatform];
-
-        return (
-            <div style={{
-                backgroundColor: 'var(--color-bg)',
-                padding: '1rem',
-                borderRadius: '8px',
-                height: 'fit-content'
-            }}>
-                <h4 style={{ 
-                    marginBottom: '1rem', 
-                    color: 'var(--color-primary)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem'
-                }}>
-                    <MessageCircle size={18} />
-                    Live Chat - {selectedConfig.name}
-                </h4>
-                
-                {platformData.isLive && selectedConfig.canEmbed && selectedConfig.getChatUrl ? (
-                    <div style={{
-                        height: '300px',
-                        backgroundColor: 'white',
-                        borderRadius: '6px',
-                        overflow: 'hidden'
-                    }}>
-                        <iframe
-                            src={selectedConfig.getChatUrl(platformData.liveVideoId)}
-                            style={{ width: '100%', height: '100%', border: 'none' }}
-                        />
-                    </div>
-                ) : (
-                    <div style={{
-                        height: '300px',
-                        backgroundColor: 'white',
-                        borderRadius: '6px',
-                        padding: '1rem',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        textAlign: 'center'
-                    }}>
-                        <MessageCircle size={32} style={{ color: 'var(--color-text-muted)', marginBottom: '1rem' }} />
-                        <p style={{ color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
-                            Chat available on {selectedConfig.name}
-                        </p>
-                        <button
-                            onClick={() => handleExternalWatch(selectedPlatform)}
-                            style={{
-                                padding: '0.5rem 1rem',
-                                backgroundColor: selectedConfig.color,
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '6px',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.5rem'
-                            }}
-                        >
-                            Join Chat <ExternalLink size={14} />
-                        </button>
-                    </div>
-                )}
-            </div>
-        );
-    };
 
     if (error) {
         return (
@@ -645,7 +577,7 @@ const MultiPlatformLiveStream = () => {
 
                     <div style={{ 
                         display: 'grid', 
-                        gridTemplateColumns: '2fr 1fr', 
+                        gridTemplateColumns: '3fr 2fr', 
                         gap: '2rem',
                         '@media (max-width: 768px)': {
                             gridTemplateColumns: '1fr'
@@ -654,8 +586,41 @@ const MultiPlatformLiveStream = () => {
                         {/* Stream Player */}
                         {renderStreamPlayer()}
 
-                        {/* Live Chat & Info */}
-                        {renderChatSection()}
+                        {/* Sidebar with Chat, Analytics & Donations */}
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '1.5rem'
+                        }}>
+                            {/* Live Chat */}
+                            <ChatSystem 
+                                platform={selectedPlatform}
+                                streamId={activePlatform?.liveVideoId}
+                                isLive={isAnyLive}
+                                moderatorMode={false}
+                            />
+                            
+                            {/* Analytics */}
+                            <AnalyticsTracker
+                                streamId={activePlatform?.liveVideoId}
+                                platform={selectedPlatform}
+                                isLive={isAnyLive}
+                                onAnalyticsUpdate={(event) => {
+                                    // Handle analytics events
+                                    console.log('Analytics:', event);
+                                }}
+                            />
+                            
+                            {/* Donation System */}
+                            <DonationSystem
+                                streamId={activePlatform?.liveVideoId}
+                                onDonationComplete={(donation) => {
+                                    // Handle donation completion
+                                    console.log('Donation completed:', donation);
+                                    // Could trigger celebration animation or update chat
+                                }}
+                            />
+                        </div>
                     </div>
 
                     {/* Quick Actions */}
