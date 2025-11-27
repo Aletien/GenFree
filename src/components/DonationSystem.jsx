@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useFlutterwave, closePaymentModal } from 'flutterwave-react-v3';
 import { Heart, Gift, DollarSign, Target, Users, Star } from 'lucide-react';
+import apiService from '../services/api';
 
 const DonationSystem = ({ streamId, onDonationComplete }) => {
     const [showDonationModal, setShowDonationModal] = useState(false);
@@ -104,65 +105,147 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
 
     const handleFlutterwavePayment = useFlutterwave(config);
 
-    const handleDonationSubmit = () => {
+    const handleDonationSubmit = async () => {
         if (!donationAmount || !donorName.trim()) return;
 
         setIsProcessing(true);
 
-        handleFlutterwavePayment({
-            callback: (response) => {
-                console.log(response);
-                closePaymentModal(); // this will close the modal programmatically
+        try {
+            // Step 1: Create donation record in Django backend
+            const donationData = {
+                amount: parseInt(donationAmount),
+                currency: selectedCurrency,
+                donor_name: donorName,
+                donor_email: 'donor@example.com', // In real app, collect email
+                donor_phone: '', // Optional
+                is_anonymous: false,
+                message: donorMessage,
+                payment_method: 'card' // Default, Flutterwave will handle actual method
+            };
 
-                if (response.status === "successful") {
-                    const newDonation = {
-                        id: response.transaction_id,
-                        name: donorName,
-                        amount: parseInt(donationAmount),
-                        currency: selectedCurrency,
-                        message: donorMessage,
-                        timestamp: Date.now(),
-                        anonymous: false,
-                        isOwn: true
-                    };
+            const donationRecord = await apiService.createDonation(donationData);
+            
+            // Step 2: Initialize Flutterwave payment with backend
+            const paymentData = {
+                donation_id: donationRecord.id,
+                amount: parseInt(donationAmount),
+                currency: selectedCurrency,
+                donor_name: donorName,
+                donor_email: 'donor@example.com',
+                redirect_url: `${window.location.origin}/donation/success`
+            };
 
-                    setDonations(prev => [newDonation, ...prev]);
-                    // Convert to UGX for progress tracking
-                    const amountInUGX = selectedCurrency === 'USD' ? parseInt(donationAmount) * 3700 : parseInt(donationAmount);
-                    setTotalRaised(prev => prev + amountInUGX);
+            // Use Flutterwave React integration
+            const config = {
+                public_key: import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY,
+                tx_ref: donationRecord.id,
+                amount: parseInt(donationAmount),
+                currency: selectedCurrency,
+                payment_options: 'card,mobilemoney,ussd',
+                customer: {
+                    email: 'donor@example.com',
+                    phone_number: '0700000000',
+                    name: donorName,
+                },
+                customizations: {
+                    title: 'GenFree Ministry Donation',
+                    description: donorMessage || 'Support for ministry work',
+                    logo: '/logo.svg',
+                },
+                meta: {
+                    donation_id: donationRecord.id
+                }
+            };
 
-                    // Trigger analytics
-                    if (window.trackStreamEvent) {
-                        window.trackStreamEvent('donation', {
-                            amount: parseInt(donationAmount),
-                            currency: selectedCurrency,
-                            method: 'flutterwave'
+            const flutterwaveHandler = useFlutterwave(config);
+            
+            flutterwaveHandler({
+                callback: async (response) => {
+                    console.log('Flutterwave response:', response);
+                    closePaymentModal();
+
+                    if (response.status === "successful") {
+                        // Update donation record with transaction details
+                        try {
+                            const updatedDonation = await apiService.request(`/donations/${donationRecord.id}/update/`, {
+                                method: 'PATCH',
+                                body: JSON.stringify({
+                                    transaction_id: response.transaction_id,
+                                    flutterwave_tx_ref: response.tx_ref,
+                                    status: 'successful',
+                                    processed_at: new Date().toISOString()
+                                })
+                            });
+
+                            const newDonation = {
+                                id: response.transaction_id,
+                                name: donorName,
+                                amount: parseInt(donationAmount),
+                                currency: selectedCurrency,
+                                message: donorMessage,
+                                timestamp: Date.now(),
+                                anonymous: false,
+                                isOwn: true
+                            };
+
+                            setDonations(prev => [newDonation, ...prev]);
+                            
+                            // Convert to UGX for progress tracking
+                            const amountInUGX = selectedCurrency === 'USD' ? parseInt(donationAmount) * 3700 : parseInt(donationAmount);
+                            setTotalRaised(prev => prev + amountInUGX);
+
+                            // Trigger analytics
+                            if (window.trackStreamEvent) {
+                                window.trackStreamEvent('donation', {
+                                    amount: parseInt(donationAmount),
+                                    currency: selectedCurrency,
+                                    method: 'flutterwave',
+                                    donation_id: donationRecord.id
+                                });
+                            }
+
+                            setShowDonationModal(false);
+                            setShowThankYou(true);
+
+                            // Reset form
+                            setDonationAmount('');
+                            setSelectedAmount(null);
+                            setDonorName('');
+                            setDonorMessage('');
+
+                            // Call callback
+                            if (onDonationComplete) {
+                                onDonationComplete(newDonation);
+                            }
+
+                            // Hide thank you after 5 seconds
+                            setTimeout(() => setShowThankYou(false), 5000);
+                        } catch (error) {
+                            console.error('Error updating donation:', error);
+                        }
+                    } else {
+                        // Handle payment failure
+                        await apiService.request(`/donations/${donationRecord.id}/update/`, {
+                            method: 'PATCH',
+                            body: JSON.stringify({
+                                status: 'failed',
+                                transaction_id: response.transaction_id || 'failed'
+                            })
                         });
                     }
+                    setIsProcessing(false);
+                },
+                onClose: () => {
+                    setIsProcessing(false);
+                },
+            });
 
-                    setShowDonationModal(false);
-                    setShowThankYou(true);
-
-                    // Reset form
-                    setDonationAmount('');
-                    setSelectedAmount(null);
-                    setDonorName('');
-                    setDonorMessage('');
-
-                    // Call callback
-                    if (onDonationComplete) {
-                        onDonationComplete(newDonation);
-                    }
-
-                    // Hide thank you after 5 seconds
-                    setTimeout(() => setShowThankYou(false), 5000);
-                }
-                setIsProcessing(false);
-            },
-            onClose: () => {
-                setIsProcessing(false);
-            },
-        });
+        } catch (error) {
+            console.error('Donation error:', error);
+            setIsProcessing(false);
+            // Show error message to user
+            alert('There was an error processing your donation. Please try again.');
+        }
     };
 
     const handlePresetAmount = (amount) => {
