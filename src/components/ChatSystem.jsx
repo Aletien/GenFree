@@ -7,11 +7,23 @@ const ChatSystem = ({ platform, streamId, isLive, moderatorMode = false }) => {
     const [userName, setUserName] = useState('');
     const [isConnected, setIsConnected] = useState(false);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [showQuickMessages, setShowQuickMessages] = useState(false);
     const [bannedUsers, setBannedUsers] = useState([]);
+    const [messageError, setMessageError] = useState('');
     const messagesEndRef = useRef(null);
     
-    // Emoji options
-    const emojis = ['😀', '😂', '😍', '🙏', '❤️', '👏', '🔥', '✨', '🎉', '👍', '😇', '🙌'];
+    // Quick message templates for easier commenting
+    const quickMessages = [
+        'Amen! 🙏',
+        'Hallelujah! 🎉',
+        'God bless! ❤️',
+        'Praying for you! 🙌',
+        'Thank you Pastor! 👏',
+        'Beautiful worship! 🎵'
+    ];
+    
+    // Emoji options - expanded for live streaming
+    const emojis = ['😀', '😂', '😍', '🙏', '❤️', '👏', '🔥', '✨', '🎉', '👍', '😇', '🙌', '🎵', '📿', '⭐', '💫', '🕊️', '🌟'];
     
     // Sample messages for demo
     useEffect(() => {
@@ -44,10 +56,20 @@ const ChatSystem = ({ platform, streamId, isLive, moderatorMode = false }) => {
             'Watching with my family 👨‍👩‍👧‍👦',
             'Such a powerful message 🔥',
             'Thank you Pastor! 👏',
-            'Amen and amen! 🙏'
+            'Amen and amen! 🙏',
+            'Beautiful worship today! 🎵',
+            'God bless this ministry 📿',
+            'Joining from Uganda! 🇺🇬',
+            'This is exactly what I needed to hear ⭐',
+            'Tears of joy 😭❤️',
+            'Holy Spirit is moving! 🕊️',
+            'Can I get an Amen? 🙌',
+            'Watching from work, God is everywhere! 💻',
+            'My heart is full 💫',
+            'Thank you for this blessing 🌟'
         ];
         
-        const users = ['Grace_777', 'FaithfulOne', 'BlessedSoul', 'HopeInChrist', 'JoyfulHeart', 'PeaceMaker', 'LoveWins'];
+        const users = ['Grace_777', 'FaithfulOne', 'BlessedSoul', 'HopeInChrist', 'JoyfulHeart', 'PeaceMaker', 'LoveWins', 'Uganda_Faith', 'Kampala_Believer', 'Moses_K', 'Sarah_Praise', 'David_Worship', 'Ruth_Joy'];
         
         const interval = setInterval(() => {
             if (Math.random() > 0.7) { // 30% chance every 3 seconds
@@ -67,12 +89,20 @@ const ChatSystem = ({ platform, streamId, isLive, moderatorMode = false }) => {
     }, [isLive, platform]);
 
     const handleSendMessage = () => {
-        if (!newMessage.trim() || !userName.trim()) return;
+        if (!newMessage.trim() || !userName.trim()) {
+            setMessageError('Please enter a message');
+            return;
+        }
+        
+        if (newMessage.trim().length > 200) {
+            setMessageError('Message too long (max 200 characters)');
+            return;
+        }
         
         const message = {
             id: Date.now(),
             user: userName,
-            message: newMessage,
+            message: newMessage.trim(),
             timestamp: Date.now(),
             likes: 0,
             platform: platform,
@@ -81,6 +111,15 @@ const ChatSystem = ({ platform, streamId, isLive, moderatorMode = false }) => {
         
         setMessages(prev => [...prev, message]);
         setNewMessage('');
+        setMessageError('');
+        
+        // Analytics tracking
+        if (window.trackStreamEvent) {
+            window.trackStreamEvent('chat_message', {
+                platform: platform,
+                messageLength: newMessage.trim().length
+            });
+        }
     };
 
     const handleLikeMessage = (messageId) => {
@@ -105,6 +144,13 @@ const ChatSystem = ({ platform, streamId, isLive, moderatorMode = false }) => {
     const handleEmojiClick = (emoji) => {
         setNewMessage(prev => prev + emoji);
         setShowEmojiPicker(false);
+        setMessageError('');
+    };
+    
+    const handleQuickMessage = (message) => {
+        setNewMessage(message);
+        setShowQuickMessages(false);
+        setMessageError('');
     };
 
     const formatTime = (timestamp) => {
@@ -289,19 +335,51 @@ const ChatSystem = ({ platform, streamId, isLive, moderatorMode = false }) => {
                         <div style={{ flex: 1 }}>
                             <textarea
                                 value={newMessage}
-                                onChange={(e) => setNewMessage(e.target.value)}
-                                placeholder="Type your message..."
+                                onChange={(e) => {
+                                    setNewMessage(e.target.value);
+                                    setMessageError('');
+                                }}
+                                placeholder="Type your message... (200 char max)"
                                 rows={2}
+                                maxLength={200}
                                 style={{
                                     width: '100%',
                                     padding: '0.5rem',
-                                    border: '1px solid var(--color-border)',
+                                    border: `1px solid ${messageError ? '#ff4444' : 'var(--color-border)'}`,
                                     borderRadius: '4px',
                                     resize: 'none',
                                     fontSize: '0.9rem'
                                 }}
                                 onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
                             />
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginTop: '0.25rem',
+                                fontSize: '0.7rem'
+                            }}>
+                                {messageError ? (
+                                    <span style={{ color: '#ff4444' }}>{messageError}</span>
+                                ) : (
+                                    <span style={{ color: 'var(--color-text-muted)' }}>
+                                        {newMessage.length}/200
+                                    </span>
+                                )}
+                                <button
+                                    onClick={() => setShowQuickMessages(!showQuickMessages)}
+                                    style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        color: 'var(--color-primary)',
+                                        cursor: 'pointer',
+                                        fontSize: '0.7rem',
+                                        textDecoration: 'underline'
+                                    }}
+                                >
+                                    Quick Messages
+                                </button>
+                            </div>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                             <button
@@ -334,6 +412,39 @@ const ChatSystem = ({ platform, streamId, isLive, moderatorMode = false }) => {
                             </button>
                         </div>
                     </div>
+
+                    {/* Quick Messages */}
+                    {showQuickMessages && (
+                        <div style={{
+                            marginTop: '0.5rem',
+                            padding: '0.5rem',
+                            backgroundColor: 'white',
+                            border: '1px solid var(--color-border)',
+                            borderRadius: '6px',
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(2, 1fr)',
+                            gap: '0.25rem'
+                        }}>
+                            {quickMessages.map((message, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => handleQuickMessage(message)}
+                                    style={{
+                                        padding: '0.5rem',
+                                        border: '1px solid var(--color-border)',
+                                        borderRadius: '4px',
+                                        cursor: 'pointer',
+                                        fontSize: '0.8rem',
+                                        backgroundColor: 'var(--color-bg)',
+                                        color: 'var(--color-text)',
+                                        textAlign: 'center'
+                                    }}
+                                >
+                                    {message}
+                                </button>
+                            ))}
+                        </div>
+                    )}
 
                     {/* Emoji Picker */}
                     {showEmojiPicker && (
