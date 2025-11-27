@@ -7,8 +7,27 @@ import ChatSystem from './ChatSystem';
 import AnalyticsTracker from './AnalyticsTracker';
 import DonationSystem from './DonationSystem';
 
+// Custom hook for responsive design
+const useResponsive = () => {
+    const [isMobile, setIsMobile] = useState(false);
+    
+    useEffect(() => {
+        const checkScreenSize = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
+        
+        return () => window.removeEventListener('resize', checkScreenSize);
+    }, []);
+    
+    return { isMobile };
+};
+
 const MultiPlatformLiveStream = () => {
     const { t } = useLanguage();
+    const { isMobile } = useResponsive();
     const { 
         isAnyLive, 
         platforms, 
@@ -211,10 +230,11 @@ const MultiPlatformLiveStream = () => {
     const renderPlatformSelector = () => (
         <div style={{
             display: 'flex',
-            gap: '0.5rem',
+            gap: isMobile ? '0.25rem' : '0.5rem',
             marginBottom: '1.5rem',
             flexWrap: 'wrap',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            padding: isMobile ? '0 0.5rem' : '0'
         }}>
             {Object.entries(platforms).map(([platform, data]) => {
                 const config = platformConfigs[platform];
@@ -227,7 +247,7 @@ const MultiPlatformLiveStream = () => {
                         onClick={() => handlePlatformSelect(platform)}
                         disabled={!isLive}
                         style={{
-                            padding: '0.75rem 1.25rem',
+                            padding: isMobile ? '0.5rem 0.75rem' : '0.75rem 1.25rem',
                             backgroundColor: isSelected ? config.color : (isLive ? 'var(--color-surface)' : 'var(--color-bg)'),
                             color: isSelected ? 'white' : (isLive ? 'var(--color-text)' : 'var(--color-text-muted)'),
                             border: isSelected ? 'none' : '2px solid var(--color-border)',
@@ -239,7 +259,10 @@ const MultiPlatformLiveStream = () => {
                             gap: '0.5rem',
                             transition: 'all 0.3s ease',
                             position: 'relative',
-                            opacity: isLive ? 1 : 0.5
+                            opacity: isLive ? 1 : 0.5,
+                            fontSize: isMobile ? '0.9rem' : '1rem',
+                            minWidth: isMobile ? 'auto' : 'fit-content',
+                            flexShrink: isMobile ? 1 : 0
                         }}
                     >
                         <span>{config.icon}</span>
@@ -577,11 +600,8 @@ const MultiPlatformLiveStream = () => {
 
                     <div style={{ 
                         display: 'grid', 
-                        gridTemplateColumns: '3fr 2fr', 
-                        gap: '2rem',
-                        '@media (max-width: 768px)': {
-                            gridTemplateColumns: '1fr'
-                        }
+                        gridTemplateColumns: isMobile ? '1fr' : '3fr 2fr', 
+                        gap: '2rem'
                     }}>
                         {/* Stream Player */}
                         {renderStreamPlayer()}
@@ -626,31 +646,32 @@ const MultiPlatformLiveStream = () => {
                     {/* Quick Actions */}
                     <div style={{
                         marginTop: '2rem',
-                        padding: '1rem',
+                        padding: isMobile ? '0.75rem' : '1rem',
                         backgroundColor: 'var(--color-bg)',
                         borderRadius: '8px',
                         display: 'flex',
                         justifyContent: 'center',
-                        gap: '1rem',
+                        gap: isMobile ? '0.5rem' : '1rem',
                         flexWrap: 'wrap'
                     }}>
                         <button
                             onClick={refreshLiveStatus}
                             style={{
-                                padding: '0.5rem 1rem',
+                                padding: isMobile ? '0.5rem 0.75rem' : '0.5rem 1rem',
                                 backgroundColor: 'var(--color-primary)',
                                 color: 'white',
                                 border: 'none',
                                 borderRadius: '6px',
-                                cursor: 'pointer'
+                                cursor: 'pointer',
+                                fontSize: isMobile ? '0.9rem' : '1rem'
                             }}
                         >
-                            🔄 Refresh Status
+                            🔄 {isMobile ? 'Refresh' : 'Refresh Status'}
                         </button>
                         <button
                             onClick={handleShare}
                             style={{
-                                padding: '0.5rem 1rem',
+                                padding: isMobile ? '0.5rem 0.75rem' : '0.5rem 1rem',
                                 backgroundColor: 'var(--color-secondary)',
                                 color: 'white',
                                 border: 'none',
@@ -658,7 +679,8 @@ const MultiPlatformLiveStream = () => {
                                 cursor: 'pointer',
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '0.5rem'
+                                gap: '0.5rem',
+                                fontSize: isMobile ? '0.9rem' : '1rem'
                             }}
                         >
                             <Share2 size={14} /> Share
@@ -666,7 +688,7 @@ const MultiPlatformLiveStream = () => {
                         <button
                             onClick={toggleNotifications}
                             style={{
-                                padding: '0.5rem 1rem',
+                                padding: isMobile ? '0.5rem 0.75rem' : '0.5rem 1rem',
                                 backgroundColor: notifications ? '#00C851' : 'var(--color-accent)',
                                 color: 'white',
                                 border: 'none',
@@ -674,15 +696,16 @@ const MultiPlatformLiveStream = () => {
                                 cursor: 'pointer',
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '0.5rem'
+                                gap: '0.5rem',
+                                fontSize: isMobile ? '0.9rem' : '1rem'
                             }}
                         >
-                            🔔 {notifications ? 'Notifications On' : 'Enable Notifications'}
+                            🔔 {isMobile ? 'Notify' : (notifications ? 'Notifications On' : 'Enable Notifications')}
                         </button>
                         <button
                             onClick={() => setShowScheduleModal(true)}
                             style={{
-                                padding: '0.5rem 1rem',
+                                padding: isMobile ? '0.5rem 0.75rem' : '0.5rem 1rem',
                                 backgroundColor: 'var(--color-info)',
                                 color: 'white',
                                 border: 'none',
@@ -690,7 +713,8 @@ const MultiPlatformLiveStream = () => {
                                 cursor: 'pointer',
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '0.5rem'
+                                gap: '0.5rem',
+                                fontSize: isMobile ? '0.9rem' : '1rem'
                             }}
                         >
                             📅 Schedule
@@ -721,8 +745,8 @@ const MultiPlatformLiveStream = () => {
                         
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                            gap: '1.5rem'
+                            gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(300px, 1fr))',
+                            gap: isMobile ? '1rem' : '1.5rem'
                         }}>
                             {recordings.map((recording) => (
                                 <div
@@ -888,10 +912,11 @@ const MultiPlatformLiveStream = () => {
                     <div style={{
                         backgroundColor: 'white',
                         borderRadius: '12px',
-                        padding: '2rem',
-                        maxWidth: '400px',
+                        padding: isMobile ? '1.5rem' : '2rem',
+                        maxWidth: isMobile ? '350px' : '400px',
                         width: '90%',
-                        position: 'relative'
+                        position: 'relative',
+                        margin: isMobile ? '1rem' : '0'
                     }}>
                         <button
                             onClick={() => setShowShareModal(false)}
