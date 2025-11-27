@@ -3,6 +3,7 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 import WhatsAppWidget from './WhatsAppWidget';
 import ScrollToTop from './ScrollToTop';
+import ScrollRestoration from './ScrollRestoration';
 import AdminAccess from './AdminAccess';
 import LiveNotification from './LiveNotification';
 import { useLiveStatus } from '../hooks/useLiveStatus';
@@ -25,6 +26,7 @@ const Layout = () => {
 
     return (
         <div style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', minHeight: '100vh' }}>
+            <ScrollRestoration />
             <Navbar />
             <main>
                 <Outlet />
@@ -33,7 +35,7 @@ const Layout = () => {
             <WhatsAppWidget />
             <ScrollToTop />
             <AdminAccess />
-            <LiveNotification 
+            <LiveNotification
                 isLive={isAnyLive}
                 liveData={activePlatform}
                 onJoin={handleJoinLiveStream}
