@@ -31,12 +31,12 @@ const Navbar = () => {
 
     return (
         <nav style={{
-            backgroundColor: '#020617',
-            color: 'white',
+            backgroundColor: '#f8fafc',
+            color: '#1f2937',
             position: 'sticky',
             top: 0,
             zIndex: 1000,
-            borderBottom: '1px solid rgba(255,255,255,0.1)'
+            borderBottom: '1px solid #e5e7eb'
         }}>
             <div className="container" style={{
                 display: 'flex',
@@ -65,7 +65,7 @@ const Navbar = () => {
                                 key={link.name}
                                 to={link.path}
                                 style={{
-                                    color: isActive ? 'var(--color-primary)' : 'white',
+                                    color: isActive ? 'var(--color-primary)' : '#374151',
                                     textDecoration: 'none',
                                     fontSize: '0.9rem',
                                     fontWeight: isActive ? 600 : 500,
@@ -83,7 +83,7 @@ const Navbar = () => {
                                 }}
                                 onMouseOut={(e) => {
                                     if (!isActive) {
-                                        e.currentTarget.style.color = 'white';
+                                        e.currentTarget.style.color = '#374151';
                                     }
                                 }}
                             >
@@ -100,7 +100,7 @@ const Navbar = () => {
                         style={{
                             background: 'none',
                             border: 'none',
-                            color: 'white',
+                            color: '#374151',
                             cursor: 'pointer',
                             padding: '0.5rem',
                             display: 'flex',
@@ -120,10 +120,10 @@ const Navbar = () => {
                                 alignItems: 'center',
                                 gap: '0.5rem',
                                 padding: '0.5rem 0.75rem',
-                                border: '1px solid rgba(255,255,255,0.3)',
+                                border: '1px solid #d1d5db',
                                 borderRadius: '4px',
                                 backgroundColor: 'transparent',
-                                color: 'white',
+                                color: '#374151',
                                 cursor: 'pointer',
                                 fontSize: '0.85rem'
                             }}
@@ -193,7 +193,7 @@ const Navbar = () => {
                             justifyContent: 'center',
                             width: '36px',
                             height: '36px',
-                            border: '1px solid rgba(255,255,255,0.3)',
+                            border: '1px solid #d1d5db',
                             borderRadius: '4px',
                             backgroundColor: 'transparent',
                             color: 'var(--color-accent)',
@@ -212,7 +212,7 @@ const Navbar = () => {
                             display: 'block',
                             background: 'none',
                             border: 'none',
-                            color: 'white',
+                            color: '#374151',
                             cursor: 'pointer'
                         }}
                     >
@@ -224,9 +224,9 @@ const Navbar = () => {
             {/* Mobile Menu Dropdown */}
             {isOpen && (
                 <div style={{
-                    backgroundColor: '#020617',
+                    backgroundColor: '#f8fafc',
                     padding: '1.5rem',
-                    borderTop: '1px solid rgba(255,255,255,0.1)'
+                    borderTop: '1px solid #e5e7eb'
                 }}>
                     {navLinks.map((link) => {
                         const isActive = location.pathname === link.path;
@@ -238,11 +238,11 @@ const Navbar = () => {
                                 style={{
                                     display: 'block',
                                     padding: '1rem 0',
-                                    color: isActive ? 'var(--color-primary)' : 'white',
+                                    color: isActive ? 'var(--color-primary)' : '#374151',
                                     textDecoration: 'none',
                                     fontSize: '1rem',
                                     fontWeight: isActive ? 600 : 500,
-                                    borderBottom: '1px solid rgba(255,255,255,0.1)',
+                                    borderBottom: '1px solid #e5e7eb',
                                     backgroundColor: isActive ? 'rgba(5, 150, 105, 0.1)' : 'transparent',
                                     paddingLeft: isActive ? '1rem' : '0',
                                     borderLeft: isActive ? '3px solid var(--color-primary)' : '3px solid transparent',
