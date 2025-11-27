@@ -4,6 +4,7 @@
 
 [build.environment]
   NETLIFY = "true"
+  VITE_FLUTTERWAVE_PUBLIC_KEY = "FLWPUBK_TEST-f18b5612cfa1fcbce67bbbe6f0c27a74-X"
 
 # Admin routes - serve admin files directly
 [[redirects]]
