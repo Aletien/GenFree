@@ -6,8 +6,9 @@ import { useLiveStatus } from '../hooks/useLiveStatus';
 import ChatSystem from './ChatSystem';
 import AnalyticsTracker from './AnalyticsTracker';
 import DonationSystem from './DonationSystem';
+import './MultiPlatformLiveStream.css';
 
-// Enhanced responsive hook with multiple breakpoints
+// Simplified responsive hook with consistent breakpoints
 const useResponsive = () => {
     const [screenSize, setScreenSize] = useState({
         isMobile: false,
@@ -20,25 +21,39 @@ const useResponsive = () => {
         const checkScreenSize = () => {
             const width = window.innerWidth;
             setScreenSize({
-                isMobile: width <= 768,
-                isTablet: width > 768 && width <= 1024,
-                isDesktop: width > 1024,
+                isMobile: width <= 480,
+                isTablet: width > 480 && width <= 768,
+                isDesktop: width > 768,
                 width
             });
         };
         
         checkScreenSize();
-        window.addEventListener('resize', checkScreenSize);
+        const debouncedResize = debounce(checkScreenSize, 150);
+        window.addEventListener('resize', debouncedResize);
         
-        return () => window.removeEventListener('resize', checkScreenSize);
+        return () => window.removeEventListener('resize', debouncedResize);
     }, []);
     
     return screenSize;
 };
 
+// Debounce function to prevent excessive resize calls
+const debounce = (func, wait) => {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+};
+
 const MultiPlatformLiveStream = () => {
     const { t } = useLanguage();
-    const { isMobile, isTablet, isDesktop, width } = useResponsive();
+    const { isMobile, isTablet, isDesktop } = useResponsive();
     const { 
         isAnyLive, 
         platforms, 
@@ -83,14 +98,14 @@ const MultiPlatformLiveStream = () => {
             name: 'Instagram Live',
             icon: '📸',
             color: '#E4405F',
-            canEmbed: false, // Instagram doesn't allow embedding
+            canEmbed: false,
             fallbackUrl: 'https://instagram.com/YOUR_HANDLE/live'
         },
         tiktok: {
             name: 'TikTok Live',
             icon: '🎵',
             color: '#000000',
-            canEmbed: false, // TikTok doesn't allow embedding
+            canEmbed: false,
             fallbackUrl: 'https://tiktok.com/@YOUR_HANDLE/live'
         }
     };
@@ -208,13 +223,11 @@ const MultiPlatformLiveStream = () => {
 
     const setReminder = (service) => {
         if ('Notification' in window && Notification.permission === 'granted') {
-            // Calculate time until service
             const serviceDate = new Date(service.date + ' ' + service.time);
             const now = new Date();
             const timeDiff = serviceDate.getTime() - now.getTime();
             
             if (timeDiff > 0) {
-                // Set reminder 15 minutes before
                 setTimeout(() => {
                     new Notification('🔴 Live Stream Starting Soon!', {
                         body: `${service.title} starts in 15 minutes`,
@@ -239,14 +252,7 @@ const MultiPlatformLiveStream = () => {
     };
 
     const renderPlatformSelector = () => (
-        <div style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : isTablet ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
-            gap: isMobile ? '0.5rem' : isTablet ? '0.75rem' : '1rem',
-            marginBottom: isMobile ? '1rem' : '1.5rem',
-            padding: isMobile ? '0 0.5rem' : '0',
-            maxWidth: '100%'
-        }}>
+        <div className="platform-selector">
             {Object.entries(platforms).map(([platform, data]) => {
                 const config = platformConfigs[platform];
                 const isSelected = selectedPlatform === platform;
@@ -257,54 +263,22 @@ const MultiPlatformLiveStream = () => {
                         key={platform}
                         onClick={() => handlePlatformSelect(platform)}
                         disabled={!isLive}
+                        className={`platform-btn ${isSelected ? 'selected' : ''} ${!isLive ? 'disabled' : ''}`}
                         style={{
-                            padding: isMobile ? '0.75rem 0.5rem' : isTablet ? '0.75rem' : '0.75rem 1.25rem',
-                            backgroundColor: isSelected ? config.color : (isLive ? 'var(--color-surface)' : 'var(--color-bg)'),
-                            color: isSelected ? 'white' : (isLive ? 'var(--color-text)' : 'var(--color-text-muted)'),
-                            border: isSelected ? 'none' : '2px solid var(--color-border)',
-                            borderRadius: isMobile ? '6px' : '8px',
-                            cursor: isLive ? 'pointer' : 'not-allowed',
-                            fontWeight: '600',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexDirection: isMobile ? 'column' : 'row',
-                            gap: isMobile ? '0.25rem' : '0.5rem',
-                            transition: 'all 0.3s ease',
-                            position: 'relative',
-                            opacity: isLive ? 1 : 0.5,
-                            fontSize: isMobile ? '0.75rem' : isTablet ? '0.9rem' : '1rem',
-                            minHeight: isMobile ? '60px' : 'auto',
-                            width: '100%',
-                            boxSizing: 'border-box'
+                            '--platform-color': config.color,
+                            backgroundColor: isSelected ? config.color : undefined
                         }}
                     >
-                        <span style={{ fontSize: isMobile ? '1.2rem' : '1rem' }}>{config.icon}</span>
-                        <span style={{ 
-                            fontSize: isMobile ? '0.7rem' : 'inherit',
-                            textAlign: 'center',
-                            lineHeight: '1.2'
-                        }}>
+                        <span className="platform-icon">{config.icon}</span>
+                        <span className="platform-name">
                             {isMobile ? config.name.split(' ')[0] : config.name}
                         </span>
-                        {isLive && (
-                            <div style={{
-                                width: '8px',
-                                height: '8px',
-                                backgroundColor: isSelected ? 'white' : '#00ff00',
-                                borderRadius: '50%',
-                                animation: 'blink 1s infinite'
-                            }} />
-                        )}
+                        {isLive && <div className="live-indicator" />}
                         {data.viewerCount && (
-                            <span style={{ fontSize: '0.8rem', opacity: 0.8 }}>
-                                ({data.viewerCount})
-                            </span>
+                            <span className="viewer-count">({data.viewerCount})</span>
                         )}
                         {likes[platform] && (
-                            <span style={{ fontSize: '0.8rem', opacity: 0.8 }}>
-                                ❤️ {likes[platform]}
-                            </span>
+                            <span className="like-count">❤️ {likes[platform]}</span>
                         )}
                     </button>
                 );
@@ -318,37 +292,15 @@ const MultiPlatformLiveStream = () => {
 
         if (!platformData.isLive) {
             return (
-                <div style={{
-                    aspectRatio: '16/9',
-                    backgroundColor: '#000',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexDirection: 'column',
-                    color: 'white',
-                    textAlign: 'center',
-                    gap: '1rem'
-                }}>
-                    <Play size={48} style={{ opacity: 0.5 }} />
-                    <div>
+                <div className="stream-offline">
+                    <Play size={48} className="offline-icon" />
+                    <div className="offline-content">
                         <h3>Not Currently Live</h3>
                         <p>Check back later or follow us for live notifications</p>
                         <button
                             onClick={() => handleExternalWatch(selectedPlatform)}
-                            style={{
-                                marginTop: '1rem',
-                                padding: '0.5rem 1rem',
-                                backgroundColor: selectedConfig.color,
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '6px',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.5rem',
-                                margin: '0 auto'
-                            }}
+                            className="visit-platform-btn"
+                            style={{ backgroundColor: selectedConfig.color }}
                         >
                             Visit {selectedConfig.name} <ExternalLink size={16} />
                         </button>
@@ -357,45 +309,19 @@ const MultiPlatformLiveStream = () => {
             );
         }
 
-        // If platform can't embed, show external link option
         if (!selectedConfig.canEmbed) {
             return (
-                <div style={{
-                    aspectRatio: '16/9',
-                    backgroundColor: selectedConfig.color,
-                    borderRadius: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexDirection: 'column',
-                    color: 'white',
-                    textAlign: 'center',
-                    gap: '1rem'
-                }}>
-                    <div style={{ fontSize: '3rem' }}>{selectedConfig.icon}</div>
-                    <div>
+                <div className="stream-external" style={{ backgroundColor: selectedConfig.color }}>
+                    <div className="external-icon">{selectedConfig.icon}</div>
+                    <div className="external-content">
                         <h3>🔴 Live on {selectedConfig.name}</h3>
                         <p>{platformData.title || 'Live Stream'}</p>
                         {platformData.viewerCount && (
-                            <p><Users size={16} style={{ display: 'inline' }} /> {platformData.viewerCount} watching</p>
+                            <p><Users size={16} /> {platformData.viewerCount} watching</p>
                         )}
                         <button
                             onClick={() => handleExternalWatch(selectedPlatform)}
-                            style={{
-                                marginTop: '1rem',
-                                padding: '1rem 1.5rem',
-                                backgroundColor: 'white',
-                                color: selectedConfig.color,
-                                border: 'none',
-                                borderRadius: '8px',
-                                cursor: 'pointer',
-                                fontWeight: 'bold',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.5rem',
-                                margin: '0 auto',
-                                fontSize: '1.1rem'
-                            }}
+                            className="watch-live-btn"
                         >
                             Watch Live <ExternalLink size={20} />
                         </button>
@@ -404,149 +330,45 @@ const MultiPlatformLiveStream = () => {
             );
         }
 
-        // Render embedded player
         return (
-            <div style={{ 
-                position: 'relative',
-                width: '100%',
-                maxWidth: '100%'
-            }}>
-                <div style={{
-                    position: 'relative',
-                    aspectRatio: '16/9',
-                    backgroundColor: '#000',
-                    borderRadius: '8px',
-                    overflow: 'hidden'
-                }}>
+            <div className="stream-player-container">
+                <div className="stream-player">
                     <iframe
-                        style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            width: '100%',
-                            height: '100%',
-                            border: 'none'
-                        }}
+                        className="stream-iframe"
                         src={selectedConfig.getEmbedUrl(platformData.liveVideoId || 'dQw4w9WgXcQ')}
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                     />
                 </div>
 
-                {/* Stream Info Overlay */}
-                <div style={{
-                    position: 'absolute',
-                    top: isMobile ? '5px' : '10px',
-                    left: isMobile ? '5px' : '10px',
-                    right: isMobile ? '5px' : '10px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    backgroundColor: 'rgba(0,0,0,0.8)',
-                    borderRadius: isMobile ? '4px' : '6px',
-                    padding: isMobile ? '0.4rem' : '0.5rem',
-                    color: 'white',
-                    fontSize: isMobile ? '0.8rem' : '1rem'
-                }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ 
-                            backgroundColor: selectedConfig.color,
-                            padding: '0.25rem 0.5rem',
-                            borderRadius: '4px',
-                            fontSize: '0.8rem',
-                            fontWeight: 'bold'
-                        }}>
+                <div className="stream-info-overlay">
+                    <div className="stream-info-left">
+                        <span className="live-badge" style={{ backgroundColor: selectedConfig.color }}>
                             🔴 LIVE
                         </span>
-                        <span>{selectedConfig.name}</span>
+                        <span className="platform-name">{selectedConfig.name}</span>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div className="stream-info-right">
                         <Users size={16} />
                         <span>{platformData.viewerCount || 0}</span>
                     </div>
                 </div>
 
-                {/* Stream Controls */}
-                <div style={{
-                    position: 'absolute',
-                    bottom: isMobile ? '5px' : '10px',
-                    right: isMobile ? '5px' : '10px',
-                    display: 'flex',
-                    gap: isMobile ? '0.25rem' : '0.5rem',
-                    flexWrap: isMobile ? 'wrap' : 'nowrap'
-                }}>
-                    <button
-                        onClick={() => setIsMuted(!isMuted)}
-                        style={{
-                            backgroundColor: 'rgba(0,0,0,0.8)',
-                            border: 'none',
-                            color: 'white',
-                            cursor: 'pointer',
-                            padding: isMobile ? '0.6rem' : '0.5rem',
-                            borderRadius: '4px',
-                            minWidth: isMobile ? '36px' : 'auto',
-                            minHeight: isMobile ? '36px' : 'auto',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}
-                    >
+                <div className="stream-controls">
+                    <button onClick={() => setIsMuted(!isMuted)} className="control-btn">
                         {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
                     </button>
-                    <button
-                        onClick={() => handleLike(selectedPlatform)}
-                        style={{
-                            backgroundColor: hasLiked[selectedPlatform] ? '#FF69B4' : 'rgba(0,0,0,0.8)',
-                            border: 'none',
-                            color: 'white',
-                            cursor: 'pointer',
-                            padding: isMobile ? '0.6rem' : '0.5rem',
-                            borderRadius: '4px',
-                            minWidth: isMobile ? '36px' : 'auto',
-                            minHeight: isMobile ? '36px' : 'auto',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: isMobile ? '2px' : '4px'
-                        }}
+                    <button 
+                        onClick={() => handleLike(selectedPlatform)} 
+                        className={`control-btn like-btn ${hasLiked[selectedPlatform] ? 'liked' : ''}`}
                     >
                         <Heart size={16} />
-                        <span style={{ fontSize: '12px' }}>{likes[selectedPlatform] || 0}</span>
+                        <span>{likes[selectedPlatform] || 0}</span>
                     </button>
-                    <button
-                        onClick={handleShare}
-                        style={{
-                            backgroundColor: 'rgba(0,0,0,0.8)',
-                            border: 'none',
-                            color: 'white',
-                            cursor: 'pointer',
-                            padding: isMobile ? '0.6rem' : '0.5rem',
-                            borderRadius: '4px',
-                            minWidth: isMobile ? '36px' : 'auto',
-                            minHeight: isMobile ? '36px' : 'auto',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}
-                    >
+                    <button onClick={handleShare} className="control-btn">
                         <Share2 size={16} />
                     </button>
-                    <button
-                        onClick={() => handleExternalWatch(selectedPlatform)}
-                        style={{
-                            backgroundColor: 'rgba(0,0,0,0.8)',
-                            border: 'none',
-                            color: 'white',
-                            cursor: 'pointer',
-                            padding: isMobile ? '0.6rem' : '0.5rem',
-                            borderRadius: '4px',
-                            minWidth: isMobile ? '36px' : 'auto',
-                            minHeight: isMobile ? '36px' : 'auto',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}
-                    >
+                    <button onClick={() => handleExternalWatch(selectedPlatform)} className="control-btn">
                         <ExternalLink size={16} />
                     </button>
                 </div>
@@ -554,19 +376,13 @@ const MultiPlatformLiveStream = () => {
         );
     };
 
-
     if (error) {
         return (
-            <div style={{ padding: '2rem 0' }}>
-                <div className="container" style={{ textAlign: 'center' }}>
-                    <h2 style={{ color: 'var(--color-error)', marginBottom: '1rem' }}>
-                        Error Loading Live Streams
-                    </h2>
-                    <p style={{ marginBottom: '2rem' }}>{error}</p>
-                    <button 
-                        onClick={refreshLiveStatus}
-                        className="btn btn-primary"
-                    >
+            <div className="error-container">
+                <div className="container">
+                    <h2 className="error-title">Error Loading Live Streams</h2>
+                    <p className="error-message">{error}</p>
+                    <button onClick={refreshLiveStatus} className="btn btn-primary">
                         Try Again
                     </button>
                 </div>
@@ -575,12 +391,7 @@ const MultiPlatformLiveStream = () => {
     }
 
     return (
-        <div style={{ 
-            padding: isMobile ? '1rem 0' : isTablet ? '1.5rem 0' : '2rem 0',
-            minHeight: '100vh',
-            width: '100%',
-            overflowX: 'hidden'
-        }}>
+        <div className="live-stream-page">
             {/* Live Indicator */}
             <AnimatePresence>
                 {isAnyLive && (
@@ -588,42 +399,17 @@ const MultiPlatformLiveStream = () => {
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        style={{
-                            position: 'fixed',
-                            top: isMobile ? '60px' : '80px',
-                            right: isMobile ? '10px' : '20px',
-                            backgroundColor: '#FF4444',
-                            color: 'white',
-                            padding: isMobile ? '0.5rem 1rem' : isTablet ? '0.65rem 1.25rem' : '0.75rem 1.5rem',
-                            borderRadius: '25px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                            zIndex: 1000,
-                            boxShadow: '0 4px 15px rgba(255, 68, 68, 0.4)',
-                            animation: 'pulse 2s infinite',
-                            fontSize: isMobile ? '0.8rem' : '0.9rem'
-                        }}
+                        className="live-indicator-badge"
                     >
-                        <div style={{
-                            width: '8px',
-                            height: '8px',
-                            backgroundColor: 'white',
-                            borderRadius: '50%',
-                            animation: 'blink 1s infinite'
-                        }} />
-                        <span style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>LIVE NOW</span>
+                        <div className="live-pulse" />
+                        <span>LIVE NOW</span>
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            <div className="container" style={{
-                maxWidth: isMobile ? '100%' : isTablet ? '90%' : '1200px',
-                margin: '0 auto',
-                padding: isMobile ? '0 1rem' : isTablet ? '0 2rem' : '0 1rem'
-            }}>
+            <div className="container">
                 {isLoading && (
-                    <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                    <div className="loading-container">
                         <p>Checking live status...</p>
                     </div>
                 )}
@@ -632,45 +418,20 @@ const MultiPlatformLiveStream = () => {
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    style={{
-                        backgroundColor: 'var(--color-surface)',
-                        borderRadius: isMobile ? '8px' : '12px',
-                        padding: isMobile ? '1rem' : isTablet ? '1.5rem' : '2rem',
-                        marginBottom: isMobile ? '2rem' : '3rem',
-                        boxShadow: 'var(--shadow-lg)',
-                        width: '100%',
-                        boxSizing: 'border-box'
-                    }}
+                    className="main-stream-section"
                 >
-                    <h2 style={{ 
-                        fontSize: isMobile ? '1.5rem' : isTablet ? '1.75rem' : '2rem', 
-                        marginBottom: isMobile ? '1rem' : '1.5rem', 
-                        color: 'var(--color-primary)',
-                        textAlign: 'center',
-                        lineHeight: '1.2'
-                    }}>
+                    <h2 className="stream-title">
                         {isAnyLive ? '🔴 Choose Your Platform' : '📺 Live Streaming'}
                     </h2>
 
-                    {/* Platform Selector */}
                     {renderPlatformSelector()}
 
-                    <div style={{ 
-                        display: 'grid', 
-                        gridTemplateColumns: isMobile ? '1fr' : isTablet ? '1fr' : '3fr 2fr', 
-                        gap: isMobile ? '1rem' : isTablet ? '1.5rem' : '2rem'
-                    }}>
-                        {/* Stream Player */}
-                        {renderStreamPlayer()}
+                    <div className="stream-layout">
+                        <div className="stream-main">
+                            {renderStreamPlayer()}
+                        </div>
 
-                        {/* Sidebar with Chat, Analytics & Donations */}
-                        <div style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: isMobile ? '1rem' : '1.5rem',
-                            order: isMobile || isTablet ? 2 : 1
-                        }}>
-                            {/* Live Chat */}
+                        <div className="stream-sidebar">
                             <ChatSystem 
                                 platform={selectedPlatform}
                                 streamId={activePlatform?.liveVideoId}
@@ -678,103 +439,39 @@ const MultiPlatformLiveStream = () => {
                                 moderatorMode={false}
                             />
                             
-                            {/* Analytics */}
                             <AnalyticsTracker
                                 streamId={activePlatform?.liveVideoId}
                                 platform={selectedPlatform}
                                 isLive={isAnyLive}
                                 onAnalyticsUpdate={(event) => {
-                                    // Handle analytics events
                                     console.log('Analytics:', event);
                                 }}
                             />
                             
-                            {/* Donation System */}
                             <DonationSystem
                                 streamId={activePlatform?.liveVideoId}
                                 onDonationComplete={(donation) => {
-                                    // Handle donation completion
                                     console.log('Donation completed:', donation);
-                                    // Could trigger celebration animation or update chat
                                 }}
                             />
                         </div>
                     </div>
 
                     {/* Quick Actions */}
-                    <div style={{
-                        marginTop: '2rem',
-                        padding: isMobile ? '0.75rem' : '1rem',
-                        backgroundColor: 'var(--color-bg)',
-                        borderRadius: '8px',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        gap: isMobile ? '0.5rem' : '1rem',
-                        flexWrap: 'wrap'
-                    }}>
-                        <button
-                            onClick={refreshLiveStatus}
-                            style={{
-                                padding: isMobile ? '0.5rem 0.75rem' : '0.5rem 1rem',
-                                backgroundColor: 'var(--color-primary)',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '6px',
-                                cursor: 'pointer',
-                                fontSize: isMobile ? '0.9rem' : '1rem'
-                            }}
-                        >
+                    <div className="quick-actions">
+                        <button onClick={refreshLiveStatus} className="action-btn primary">
                             🔄 {isMobile ? 'Refresh' : 'Refresh Status'}
                         </button>
-                        <button
-                            onClick={handleShare}
-                            style={{
-                                padding: isMobile ? '0.5rem 0.75rem' : '0.5rem 1rem',
-                                backgroundColor: 'var(--color-secondary)',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '6px',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.5rem',
-                                fontSize: isMobile ? '0.9rem' : '1rem'
-                            }}
-                        >
+                        <button onClick={handleShare} className="action-btn secondary">
                             <Share2 size={14} /> Share
                         </button>
-                        <button
-                            onClick={toggleNotifications}
-                            style={{
-                                padding: isMobile ? '0.5rem 0.75rem' : '0.5rem 1rem',
-                                backgroundColor: notifications ? '#00C851' : 'var(--color-accent)',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '6px',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.5rem',
-                                fontSize: isMobile ? '0.9rem' : '1rem'
-                            }}
+                        <button 
+                            onClick={toggleNotifications} 
+                            className={`action-btn ${notifications ? 'success' : 'accent'}`}
                         >
                             🔔 {isMobile ? 'Notify' : (notifications ? 'Notifications On' : 'Enable Notifications')}
                         </button>
-                        <button
-                            onClick={() => setShowScheduleModal(true)}
-                            style={{
-                                padding: isMobile ? '0.5rem 0.75rem' : '0.5rem 1rem',
-                                backgroundColor: 'var(--color-info)',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '6px',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.5rem',
-                                fontSize: isMobile ? '0.9rem' : '1rem'
-                            }}
-                        >
+                        <button onClick={() => setShowScheduleModal(true)} className="action-btn info">
                             📅 Schedule
                         </button>
                     </div>
@@ -785,162 +482,60 @@ const MultiPlatformLiveStream = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        style={{
-                            backgroundColor: 'var(--color-surface)',
-                            borderRadius: '12px',
-                            padding: '2rem',
-                            boxShadow: 'var(--shadow-lg)'
-                        }}
+                        className="recordings-section"
                     >
-                        <h3 style={{
-                            fontSize: '1.5rem',
-                            marginBottom: '1.5rem',
-                            color: 'var(--color-primary)',
-                            textAlign: 'center'
-                        }}>
-                            📹 Previous Streams
-                        </h3>
+                        <h3 className="recordings-title">📹 Previous Streams</h3>
                         
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(300px, 1fr))',
-                            gap: isMobile ? '1rem' : '1.5rem'
-                        }}>
+                        <div className="recordings-grid">
                             {recordings.map((recording) => (
-                                <div
-                                    key={recording.id}
-                                    style={{
-                                        backgroundColor: 'var(--color-bg)',
-                                        borderRadius: '8px',
-                                        overflow: 'hidden',
-                                        boxShadow: 'var(--shadow-sm)'
-                                    }}
-                                >
-                                    <div style={{ position: 'relative' }}>
-                                        <img
-                                            src={recording.thumbnail}
-                                            alt={recording.title}
-                                            style={{
-                                                width: '100%',
-                                                height: '180px',
-                                                objectFit: 'cover'
-                                            }}
-                                        />
-                                        <div style={{
-                                            position: 'absolute',
-                                            bottom: '8px',
-                                            right: '8px',
-                                            backgroundColor: 'rgba(0,0,0,0.8)',
-                                            color: 'white',
-                                            padding: '4px 8px',
-                                            borderRadius: '4px',
-                                            fontSize: '0.8rem'
-                                        }}>
-                                            {recording.duration}
-                                        </div>
-                                        <div style={{
-                                            position: 'absolute',
-                                            top: '8px',
-                                            left: '8px',
-                                            backgroundColor: platformConfigs[recording.platform].color,
-                                            color: 'white',
-                                            padding: '4px 8px',
-                                            borderRadius: '4px',
-                                            fontSize: '0.7rem',
-                                            fontWeight: 'bold'
-                                        }}>
+                                <div key={recording.id} className="recording-card">
+                                    <div className="recording-thumbnail">
+                                        <img src={recording.thumbnail} alt={recording.title} />
+                                        <div className="duration-badge">{recording.duration}</div>
+                                        <div 
+                                            className="platform-badge"
+                                            style={{ backgroundColor: platformConfigs[recording.platform].color }}
+                                        >
                                             {platformConfigs[recording.platform].icon} {platformConfigs[recording.platform].name}
                                         </div>
                                     </div>
                                     
-                                    <div style={{ padding: '1rem' }}>
-                                        <h4 style={{
-                                            margin: '0 0 0.5rem 0',
-                                            fontSize: '1rem',
-                                            color: 'var(--color-primary)',
-                                            lineHeight: '1.3'
-                                        }}>
-                                            {recording.title}
-                                        </h4>
+                                    <div className="recording-content">
+                                        <h4 className="recording-title">{recording.title}</h4>
                                         
-                                        <div style={{
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center',
-                                            marginBottom: '1rem',
-                                            fontSize: '0.8rem',
-                                            color: 'var(--color-text-muted)'
-                                        }}>
+                                        <div className="recording-meta">
                                             <span>{recording.date}</span>
-                                            <div style={{ display: 'flex', gap: '1rem' }}>
+                                            <div className="recording-stats">
                                                 <span>👁️ {recording.views}</span>
                                                 <span>❤️ {recording.likes}</span>
                                             </div>
                                         </div>
                                         
-                                        <div style={{
-                                            display: 'flex',
-                                            gap: '0.5rem',
-                                            flexWrap: 'wrap'
-                                        }}>
+                                        <div className="recording-actions">
                                             <button
                                                 onClick={() => window.open(recording.url, '_blank')}
-                                                style={{
-                                                    flex: 1,
-                                                    padding: '0.5rem',
-                                                    backgroundColor: 'var(--color-primary)',
-                                                    color: 'white',
-                                                    border: 'none',
-                                                    borderRadius: '4px',
-                                                    cursor: 'pointer',
-                                                    fontSize: '0.9rem',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    gap: '0.5rem'
-                                                }}
+                                                className="recording-action primary"
                                             >
                                                 <Play size={14} /> Watch
                                             </button>
                                             
                                             <button
                                                 onClick={() => toggleFavorite(recording.id)}
-                                                style={{
-                                                    padding: '0.5rem',
-                                                    backgroundColor: favorites.includes(recording.id) ? '#FFD700' : 'var(--color-warning)',
-                                                    color: favorites.includes(recording.id) ? '#000' : 'white',
-                                                    border: 'none',
-                                                    borderRadius: '4px',
-                                                    cursor: 'pointer'
-                                                }}
+                                                className={`recording-action ${favorites.includes(recording.id) ? 'favorited' : 'favorite'}`}
                                             >
                                                 {favorites.includes(recording.id) ? '⭐' : '☆'}
                                             </button>
                                             
                                             <button
                                                 onClick={() => shareToSocial('facebook', recording.url, recording.title)}
-                                                style={{
-                                                    padding: '0.5rem',
-                                                    backgroundColor: 'var(--color-secondary)',
-                                                    color: 'white',
-                                                    border: 'none',
-                                                    borderRadius: '4px',
-                                                    cursor: 'pointer'
-                                                }}
+                                                className="recording-action secondary"
                                             >
                                                 <Share2 size={14} />
                                             </button>
                                             
                                             <button
                                                 onClick={() => copyToClipboard(recording.url)}
-                                                style={{
-                                                    padding: '0.5rem',
-                                                    backgroundColor: 'var(--color-accent)',
-                                                    color: 'white',
-                                                    border: 'none',
-                                                    borderRadius: '4px',
-                                                    cursor: 'pointer'
-                                                }}
+                                                className="recording-action accent"
                                             >
                                                 <Copy size={14} />
                                             </button>
@@ -955,143 +550,41 @@ const MultiPlatformLiveStream = () => {
 
             {/* Share Modal */}
             {showShareModal && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    backgroundColor: 'rgba(0,0,0,0.5)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 1000
-                }}>
-                    <div style={{
-                        backgroundColor: 'white',
-                        borderRadius: '12px',
-                        padding: isMobile ? '1.5rem' : '2rem',
-                        maxWidth: isMobile ? '350px' : '400px',
-                        width: '90%',
-                        position: 'relative',
-                        margin: isMobile ? '1rem' : '0'
-                    }}>
+                <div className="modal-overlay">
+                    <div className="modal-content">
                         <button
                             onClick={() => setShowShareModal(false)}
-                            style={{
-                                position: 'absolute',
-                                top: '1rem',
-                                right: '1rem',
-                                background: 'none',
-                                border: 'none',
-                                fontSize: '1.5rem',
-                                cursor: 'pointer'
-                            }}
+                            className="modal-close"
                         >
-                            ×
+                            ✕
                         </button>
                         
-                        <h3 style={{ marginBottom: '1.5rem', color: 'var(--color-primary)' }}>
-                            📤 Share Live Stream
-                        </h3>
+                        <h3>Share Live Stream</h3>
                         
-                        <div style={{ marginBottom: '1.5rem' }}>
-                            <input
-                                type="text"
-                                value={window.location.href}
-                                readOnly
-                                style={{
-                                    width: '100%',
-                                    padding: '0.75rem',
-                                    border: '1px solid var(--color-border)',
-                                    borderRadius: '6px',
-                                    fontSize: '0.9rem'
-                                }}
-                            />
+                        <div className="share-options">
                             <button
-                                onClick={() => copyToClipboard(window.location.href)}
-                                style={{
-                                    marginTop: '0.5rem',
-                                    width: '100%',
-                                    padding: '0.75rem',
-                                    backgroundColor: 'var(--color-primary)',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '0.5rem'
-                                }}
-                            >
-                                <Copy size={16} /> Copy Link
-                            </button>
-                        </div>
-                        
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(2, 1fr)',
-                            gap: '0.5rem'
-                        }}>
-                            <button
-                                onClick={() => shareToSocial('facebook', window.location.href, 'Watch Live Stream')}
-                                style={{
-                                    padding: '0.75rem',
-                                    backgroundColor: '#1877F2',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontSize: '0.9rem'
-                                }}
+                                onClick={() => shareToSocial('facebook', window.location.href, 'Join our live stream!')}
+                                className="share-option facebook"
                             >
                                 📘 Facebook
                             </button>
-                            
                             <button
-                                onClick={() => shareToSocial('twitter', window.location.href, 'Watch Live Stream')}
-                                style={{
-                                    padding: '0.75rem',
-                                    backgroundColor: '#1DA1F2',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontSize: '0.9rem'
-                                }}
+                                onClick={() => shareToSocial('twitter', window.location.href, 'Join our live stream!')}
+                                className="share-option twitter"
                             >
                                 🐦 Twitter
                             </button>
-                            
                             <button
-                                onClick={() => shareToSocial('whatsapp', window.location.href, 'Watch Live Stream')}
-                                style={{
-                                    padding: '0.75rem',
-                                    backgroundColor: '#25D366',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontSize: '0.9rem'
-                                }}
+                                onClick={() => shareToSocial('whatsapp', window.location.href, 'Join our live stream!')}
+                                className="share-option whatsapp"
                             >
                                 📱 WhatsApp
                             </button>
-                            
                             <button
-                                onClick={() => shareToSocial('telegram', window.location.href, 'Watch Live Stream')}
-                                style={{
-                                    padding: '0.75rem',
-                                    backgroundColor: '#0088cc',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontSize: '0.9rem'
-                                }}
+                                onClick={() => copyToClipboard(window.location.href)}
+                                className="share-option copy"
                             >
-                                ✈️ Telegram
+                                📋 Copy Link
                             </button>
                         </div>
                     </div>
@@ -1100,181 +593,63 @@ const MultiPlatformLiveStream = () => {
 
             {/* Schedule Modal */}
             {showScheduleModal && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    backgroundColor: 'rgba(0,0,0,0.5)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 1000
-                }}>
-                    <div style={{
-                        backgroundColor: 'white',
-                        borderRadius: isMobile ? '8px' : '12px',
-                        padding: isMobile ? '1rem' : isTablet ? '1.5rem' : '2rem',
-                        maxWidth: isMobile ? '95%' : isTablet ? '450px' : '500px',
-                        width: '90%',
-                        maxHeight: isMobile ? '90vh' : '80vh',
-                        overflowY: 'auto',
-                        position: 'relative',
-                        margin: isMobile ? '0.5rem' : '0'
-                    }}>
+                <div className="modal-overlay">
+                    <div className="modal-content schedule-modal">
                         <button
                             onClick={() => setShowScheduleModal(false)}
-                            style={{
-                                position: 'absolute',
-                                top: '1rem',
-                                right: '1rem',
-                                background: 'none',
-                                border: 'none',
-                                fontSize: '1.5rem',
-                                cursor: 'pointer'
-                            }}
+                            className="modal-close"
                         >
-                            ×
+                            ✕
                         </button>
                         
-                        <h3 style={{ marginBottom: '1.5rem', color: 'var(--color-primary)' }}>
-                            📅 Upcoming Live Streams
-                        </h3>
+                        <h3>Upcoming Services</h3>
                         
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            {[
-                                {
-                                    title: 'Sunday Worship Service',
-                                    date: '2024-01-28',
-                                    time: '10:00 AM',
-                                    platform: 'YouTube & Facebook',
-                                    description: 'Join us for our weekly worship service'
-                                },
-                                {
-                                    title: 'Midweek Prayer Meeting',
-                                    date: '2024-01-31',
-                                    time: '7:00 PM',
-                                    platform: 'YouTube Live',
-                                    description: 'Corporate prayer and worship time'
-                                },
-                                {
-                                    title: 'Youth Night',
-                                    date: '2024-02-02',
-                                    time: '6:30 PM',
-                                    platform: 'Instagram & TikTok',
-                                    description: 'Special youth worship session'
-                                }
-                            ].map((service, index) => (
-                                <div
-                                    key={index}
-                                    style={{
-                                        padding: '1rem',
-                                        backgroundColor: 'var(--color-bg)',
-                                        borderRadius: '8px',
-                                        border: '1px solid var(--color-border)'
-                                    }}
-                                >
-                                    <div style={{
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'flex-start',
-                                        marginBottom: '0.5rem'
-                                    }}>
-                                        <h4 style={{
-                                            margin: 0,
-                                            color: 'var(--color-primary)',
-                                            fontSize: '1rem'
-                                        }}>
-                                            {service.title}
-                                        </h4>
-                                        <span style={{
-                                            backgroundColor: 'var(--color-primary)',
-                                            color: 'white',
-                                            padding: '0.25rem 0.5rem',
-                                            borderRadius: '12px',
-                                            fontSize: '0.7rem'
-                                        }}>
-                                            {service.platform}
-                                        </span>
-                                    </div>
-                                    
-                                    <p style={{
-                                        margin: '0 0 0.75rem 0',
-                                        color: 'var(--color-text-muted)',
-                                        fontSize: '0.9rem'
-                                    }}>
-                                        {service.description}
-                                    </p>
-                                    
-                                    <div style={{
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center'
-                                    }}>
-                                        <span style={{
-                                            color: 'var(--color-text)',
-                                            fontWeight: '600',
-                                            fontSize: '0.9rem'
-                                        }}>
-                                            📅 {service.date} at {service.time}
-                                        </span>
-                                        
-                                        <button
-                                            onClick={() => {
-                                                setReminder(service);
-                                                setShowScheduleModal(false);
-                                            }}
-                                            style={{
-                                                padding: '0.5rem 1rem',
-                                                backgroundColor: 'var(--color-primary)',
-                                                color: 'white',
-                                                border: 'none',
-                                                borderRadius: '6px',
-                                                cursor: 'pointer',
-                                                fontSize: '0.8rem',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '0.5rem'
-                                            }}
-                                        >
-                                            🔔 Set Reminder
-                                        </button>
-                                    </div>
+                        <div className="schedule-list">
+                            <div className="schedule-item">
+                                <div className="schedule-time">
+                                    <span className="day">Sunday</span>
+                                    <span className="time">10:00 AM</span>
                                 </div>
-                            ))}
-                        </div>
-                        
-                        <div style={{
-                            marginTop: '1.5rem',
-                            padding: '1rem',
-                            backgroundColor: 'var(--color-info-bg)',
-                            borderRadius: '8px',
-                            textAlign: 'center'
-                        }}>
-                            <p style={{
-                                margin: 0,
-                                fontSize: '0.9rem',
-                                color: 'var(--color-text-muted)'
-                            }}>
-                                💡 Enable notifications to get alerts 15 minutes before each service starts
-                            </p>
+                                <div className="schedule-info">
+                                    <h4>Morning Worship</h4>
+                                    <p>Join us for worship and teaching</p>
+                                </div>
+                                <button 
+                                    onClick={() => setReminder({
+                                        title: 'Morning Worship',
+                                        date: new Date().toISOString().split('T')[0],
+                                        time: '10:00'
+                                    })}
+                                    className="reminder-btn"
+                                >
+                                    🔔 Remind Me
+                                </button>
+                            </div>
+                            
+                            <div className="schedule-item">
+                                <div className="schedule-time">
+                                    <span className="day">Wednesday</span>
+                                    <span className="time">7:00 PM</span>
+                                </div>
+                                <div className="schedule-info">
+                                    <h4>Prayer Meeting</h4>
+                                    <p>Midweek prayer and fellowship</p>
+                                </div>
+                                <button 
+                                    onClick={() => setReminder({
+                                        title: 'Prayer Meeting',
+                                        date: new Date().toISOString().split('T')[0],
+                                        time: '19:00'
+                                    })}
+                                    className="reminder-btn"
+                                >
+                                    🔔 Remind Me
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             )}
-
-            <style jsx>{`
-                @keyframes pulse {
-                    0% { transform: scale(1); }
-                    50% { transform: scale(1.05); }
-                    100% { transform: scale(1); }
-                }
-                @keyframes blink {
-                    0%, 50% { opacity: 1; }
-                    51%, 100% { opacity: 0.3; }
-                }
-            `}</style>
         </div>
     );
 };

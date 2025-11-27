@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Page Responsiveness Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .viewport-test {
+            border: 2px solid #ddd;
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .viewport-desktop { width: 1200px; }
+        .viewport-tablet { width: 768px; }
+        .viewport-mobile { width: 480px; }
+        .iframe-container {
+            width: 100%;
+            height: 600px;
+            border: none;
+            background: white;
+            overflow: hidden;
+        }
+        h2 { color: #333; margin-top: 30px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .info { background: #cce7ff; color: #0056b3; border: 1px solid #99d3ff; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Live Page Responsiveness Test</h1>
+        
+        <div class="status success">
+            <strong>✅ Fixed Issues:</strong>
+            <ul>
+                <li>Consistent breakpoints (480px, 768px) across CSS and JavaScript</li>
+                <li>Replaced inline styles with CSS classes for better maintainability</li>
+                <li>Added debounced resize handler to prevent excessive re-renders</li>
+                <li>Proper grid layouts that stack correctly on mobile</li>
+                <li>Optimized platform selector for mobile with 2-column layout</li>
+                <li>Fixed stream controls positioning and sizing on mobile</li>
+            </ul>
+        </div>
+        
+        <div class="status info">
+            <strong>📱 Test Instructions:</strong>
+            <p>Open the live page (/live) and test at different screen sizes:</p>
+            <ul>
+                <li><strong>Desktop (>768px):</strong> 4-column platform selector, side-by-side layout</li>
+                <li><strong>Tablet (480px-768px):</strong> 2-column platform selector, stacked layout</li>
+                <li><strong>Mobile (≤480px):</strong> 2-column platform selector, compact controls</li>
+            </ul>
+        </div>
+
+        <h2>Desktop View (1200px)</h2>
+        <div class="viewport-test viewport-desktop">
+            <p>Platform buttons should display in 4 columns, full names visible, side-by-side layout with chat</p>
+        </div>
+
+        <h2>Tablet View (768px)</h2>
+        <div class="viewport-test viewport-tablet">
+            <p>Platform buttons should display in 2 columns, stacked layout with chat below stream</p>
+        </div>
+
+        <h2>Mobile View (480px)</h2>
+        <div class="viewport-test viewport-mobile">
+            <p>Platform buttons should display in 2 columns with shortened names, compact controls, full-width layout</p>
+        </div>
+
+        <h2>Key Improvements Made</h2>
+        <div class="status info">
+            <h3>🔧 Technical Fixes:</h3>
+            <ol>
+                <li><strong>Unified Responsive System:</strong> Removed conflicting JavaScript and CSS breakpoints</li>
+                <li><strong>CSS-First Approach:</strong> Moved from inline styles to CSS classes with proper cascade</li>
+                <li><strong>Debounced Resize:</strong> Added 150ms debounce to resize handler to prevent performance issues</li>
+                <li><strong>Consistent Grid System:</strong> Used CSS Grid with proper responsive fallbacks</li>
+                <li><strong>Mobile-First Design:</strong> Optimized for mobile with progressive enhancement</li>
+                <li><strong>Proper Z-index Management:</strong> Fixed overlay stacking issues</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Show current viewport size
+        function updateViewportInfo() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            let device = 'Desktop';
+            if (width <= 480) device = 'Mobile';
+            else if (width <= 768) device = 'Tablet';
+            
+            document.title = `${device} (${width}x${height}) - Live Page Test`;
+        }
+        
+        window.addEventListener('resize', updateViewportInfo);
+        updateViewportInfo();
+    </script>
+</body>
+</html>
