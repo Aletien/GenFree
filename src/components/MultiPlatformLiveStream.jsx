@@ -74,6 +74,8 @@ const MultiPlatformLiveStream = () => {
     const [notifications, setNotifications] = useState(false);
     const [quality, setQuality] = useState('auto');
     const [fullscreen, setFullscreen] = useState(false);
+    const [currentEvent, setCurrentEvent] = useState(null);
+    const [showEventDetails, setShowEventDetails] = useState(false);
 
     // Platform configurations with embed support
     const platformConfigs = {
@@ -155,7 +157,29 @@ const MultiPlatformLiveStream = () => {
             }
         ];
         setRecordings(mockRecordings);
-    }, []);
+
+        // Check if there's a current live event
+        const currentDate = new Date();
+        const mockCurrentEvent = {
+            id: 1,
+            title: "Sunday Morning Worship Service",
+            date: "Dec 15, 2024",
+            time: "10:00 AM - 12:00 PM",
+            location: "Main Sanctuary",
+            description: "Join us for worship, prayer, and the Word of God as we gather together in His presence.",
+            category: "Worship",
+            speaker: "Pastor John Smith",
+            isLive: true,
+            streamStartTime: "2024-12-15T10:00:00Z",
+            topics: ["Faith", "Prayer", "Community"],
+            image: "https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=600&q=80"
+        };
+        
+        // Set current event if live streaming
+        if (isAnyLive) {
+            setCurrentEvent(mockCurrentEvent);
+        }
+    }, [isAnyLive]);
 
     const handlePlatformSelect = (platform) => {
         setSelectedPlatform(platform);
@@ -249,6 +273,131 @@ const MultiPlatformLiveStream = () => {
             document.exitFullscreen?.();
         }
         setFullscreen(!fullscreen);
+    };
+
+    const renderEventInfo = () => {
+        if (!currentEvent) return null;
+
+        return (
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="current-event-banner"
+                style={{
+                    background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))',
+                    color: 'white',
+                    padding: '1rem',
+                    borderRadius: '12px',
+                    marginBottom: '1.5rem',
+                    position: 'relative',
+                    overflow: 'hidden'
+                }}
+            >
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundImage: `url(${currentEvent.image})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    opacity: 0.1,
+                    zIndex: 0
+                }} />
+                
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                        <div>
+                            <div style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                padding: '0.25rem 0.75rem',
+                                borderRadius: '20px',
+                                fontSize: '0.8rem',
+                                marginBottom: '0.5rem'
+                            }}>
+                                🔴 LIVE EVENT
+                                <span style={{
+                                    width: '6px',
+                                    height: '6px',
+                                    backgroundColor: '#ff4444',
+                                    borderRadius: '50%',
+                                    animation: 'pulse 1.5s infinite'
+                                }} />
+                            </div>
+                            <h3 style={{ 
+                                margin: '0 0 0.5rem 0', 
+                                fontSize: isMobile ? '1.1rem' : '1.3rem',
+                                fontWeight: '600' 
+                            }}>
+                                {currentEvent.title}
+                            </h3>
+                            <div style={{ 
+                                display: 'flex', 
+                                flexWrap: 'wrap', 
+                                gap: '1rem', 
+                                fontSize: '0.9rem',
+                                opacity: 0.9
+                            }}>
+                                <span>📅 {currentEvent.date}</span>
+                                <span>⏰ {currentEvent.time}</span>
+                                <span>📍 {currentEvent.location}</span>
+                                {currentEvent.speaker && <span>🎤 {currentEvent.speaker}</span>}
+                            </div>
+                        </div>
+                        
+                        <button
+                            onClick={() => setShowEventDetails(true)}
+                            style={{
+                                background: 'rgba(255, 255, 255, 0.2)',
+                                border: '1px solid rgba(255, 255, 255, 0.3)',
+                                color: 'white',
+                                padding: '0.5rem 1rem',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontSize: '0.8rem',
+                                whiteSpace: 'nowrap'
+                            }}
+                        >
+                            📋 Event Details
+                        </button>
+                    </div>
+                    
+                    <p style={{ 
+                        margin: '0.5rem 0 0 0', 
+                        fontSize: '0.9rem',
+                        opacity: 0.9,
+                        lineHeight: '1.4'
+                    }}>
+                        {currentEvent.description}
+                    </p>
+                    
+                    {currentEvent.topics && (
+                        <div style={{ 
+                            display: 'flex', 
+                            gap: '0.5rem', 
+                            marginTop: '0.75rem',
+                            flexWrap: 'wrap'
+                        }}>
+                            {currentEvent.topics.map((topic, index) => (
+                                <span key={index} style={{
+                                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                    padding: '0.25rem 0.5rem',
+                                    borderRadius: '12px',
+                                    fontSize: '0.75rem',
+                                    border: '1px solid rgba(255, 255, 255, 0.3)'
+                                }}>
+                                    #{topic}
+                                </span>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </motion.div>
+        );
     };
 
     const renderPlatformSelector = () => (
@@ -424,6 +573,7 @@ const MultiPlatformLiveStream = () => {
                         {isAnyLive ? '🔴 Choose Your Platform' : '📺 Live Streaming'}
                     </h2>
 
+                    {renderEventInfo()}
                     {renderPlatformSelector()}
 
                     <div className="stream-layout">
@@ -646,6 +796,119 @@ const MultiPlatformLiveStream = () => {
                                     🔔 Remind Me
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Event Details Modal */}
+            {showEventDetails && currentEvent && (
+                <div className="modal-overlay">
+                    <div className="modal-content event-details-modal">
+                        <button
+                            onClick={() => setShowEventDetails(false)}
+                            className="modal-close"
+                        >
+                            ✕
+                        </button>
+                        
+                        <div className="event-header">
+                            <img 
+                                src={currentEvent.image} 
+                                alt={currentEvent.title}
+                                style={{
+                                    width: '100%',
+                                    height: '200px',
+                                    objectFit: 'cover',
+                                    borderRadius: '12px',
+                                    marginBottom: '1rem'
+                                }}
+                            />
+                            <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.5rem' }}>
+                                {currentEvent.title}
+                            </h3>
+                        </div>
+                        
+                        <div className="event-details-grid">
+                            <div className="event-info-section">
+                                <h4>📅 Event Information</h4>
+                                <div className="info-grid">
+                                    <div className="info-item">
+                                        <span className="label">Date:</span>
+                                        <span>{currentEvent.date}</span>
+                                    </div>
+                                    <div className="info-item">
+                                        <span className="label">Time:</span>
+                                        <span>{currentEvent.time}</span>
+                                    </div>
+                                    <div className="info-item">
+                                        <span className="label">Location:</span>
+                                        <span>{currentEvent.location}</span>
+                                    </div>
+                                    <div className="info-item">
+                                        <span className="label">Category:</span>
+                                        <span>{currentEvent.category}</span>
+                                    </div>
+                                    {currentEvent.speaker && (
+                                        <div className="info-item">
+                                            <span className="label">Speaker:</span>
+                                            <span>{currentEvent.speaker}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            
+                            <div className="event-description-section">
+                                <h4>📖 Description</h4>
+                                <p>{currentEvent.description}</p>
+                            </div>
+                            
+                            {currentEvent.topics && (
+                                <div className="event-topics-section">
+                                    <h4>🏷️ Topics</h4>
+                                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                        {currentEvent.topics.map((topic, index) => (
+                                            <span key={index} style={{
+                                                backgroundColor: 'var(--color-primary)',
+                                                color: 'white',
+                                                padding: '0.25rem 0.75rem',
+                                                borderRadius: '15px',
+                                                fontSize: '0.8rem'
+                                            }}>
+                                                #{topic}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        
+                        <div className="event-actions">
+                            <button 
+                                onClick={() => shareToSocial('facebook', window.location.href, `Join us for ${currentEvent.title}!`)}
+                                className="action-btn primary"
+                            >
+                                📘 Share Event
+                            </button>
+                            <button 
+                                onClick={() => copyToClipboard(window.location.href)}
+                                className="action-btn secondary"
+                            >
+                                📋 Copy Link
+                            </button>
+                            <button 
+                                onClick={() => {
+                                    setShowEventDetails(false);
+                                    setReminder({
+                                        title: currentEvent.title,
+                                        date: currentEvent.date,
+                                        time: currentEvent.time.split(' - ')[0]
+                                    });
+                                }}
+                                className="action-btn accent"
+                            >
+                                🔔 Set Reminder
+                            </button>
                         </div>
                     </div>
                 </div>
