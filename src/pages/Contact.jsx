@@ -16,17 +16,50 @@ const Contact = () => {
         address: "Kampala, Uganda"
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        alert('Message sent! We will get back to you soon.');
-        setFormData({ name: '', email: '', subject: '', message: '' });
+    const handleGoogleFormContact = () => {
+        // Google Form URL for contact messages
+        // Replace with your actual contact form ID
+        const formUrl = `https://forms.gle/YOUR_CONTACT_FORM_ID`;
+        window.open(formUrl, '_blank');
     };
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
+    const handleWhatsAppContact = () => {
+        const message = `Hello GenFree Network! 🙏
+
+I would like to get in touch with you.
+
+*My Details:*
+• Name: [Your full name]
+• Email: [Your email address]
+• Phone: [Your phone number]
+
+*Message:*
+[Please write your message, questions, or prayer requests here]
+
+Thank you for your ministry! 
+God bless you.`;
+        
+        // Replace with your actual WhatsApp number
+        const whatsappNumber = '256700000000'; // Update with your Uganda number
+        window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
+    };
+
+    const handleEmailContact = () => {
+        const subject = 'Contact from GenFree Website';
+        const body = `Hello GenFree Network,
+
+My Details:
+Name: [Your full name]
+Phone: [Your phone number]
+
+Message:
+[Please write your message, questions, or prayer requests here]
+
+Thank you for your ministry!
+God bless you.`;
+        
+        const mailtoUrl = `mailto:info@genfree.org?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = mailtoUrl;
     };
 
     return (
@@ -53,92 +86,155 @@ const Contact = () => {
                         {/* Contact Form */}
                         <div>
                             <h2 style={{ fontSize: '2rem', marginBottom: '1.5rem', color: 'var(--color-primary)' }}>Send Us a Message</h2>
-                            <form onSubmit={handleSubmit}>
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: 'var(--color-text)' }}>
-                                        Name *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        required
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            borderRadius: '4px',
-                                            border: '1px solid #cbd5e1',
-                                            fontSize: '1rem'
-                                        }}
-                                    />
-                                </div>
+                            
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                <p style={{ color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
+                                    We'd love to hear from you! Choose your preferred way to get in touch:
+                                </p>
 
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: 'var(--color-text)' }}>
-                                        Email *
-                                    </label>
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        required
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            borderRadius: '4px',
-                                            border: '1px solid #cbd5e1',
-                                            fontSize: '1rem'
-                                        }}
-                                    />
-                                </div>
-
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: 'var(--color-text)' }}>
-                                        Subject *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="subject"
-                                        value={formData.subject}
-                                        onChange={handleChange}
-                                        required
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            borderRadius: '4px',
-                                            border: '1px solid #cbd5e1',
-                                            fontSize: '1rem'
-                                        }}
-                                    />
-                                </div>
-
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: 'var(--color-text)' }}>
-                                        Message *
-                                    </label>
-                                    <textarea
-                                        name="message"
-                                        value={formData.message}
-                                        onChange={handleChange}
-                                        required
-                                        rows="6"
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            borderRadius: '4px',
-                                            border: '1px solid #cbd5e1',
-                                            fontSize: '1rem',
-                                            resize: 'vertical'
-                                        }}
-                                    />
-                                </div>
-
-                                <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '1rem' }}>
-                                    Send Message
+                                {/* Google Form Contact */}
+                                <button
+                                    onClick={handleGoogleFormContact}
+                                    style={{
+                                        padding: '1.25rem',
+                                        borderRadius: '8px',
+                                        border: '2px solid var(--color-primary)',
+                                        backgroundColor: 'var(--color-primary)',
+                                        color: 'white',
+                                        fontSize: '1.1rem',
+                                        fontWeight: '600',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '0.75rem'
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = 'var(--shadow-lg)';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}
+                                >
+                                    📝 Send Message via Online Form
                                 </button>
-                            </form>
+
+                                <div style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: '0.5rem 0' }}>
+                                    — or —
+                                </div>
+
+                                {/* WhatsApp Contact */}
+                                <button
+                                    onClick={handleWhatsAppContact}
+                                    style={{
+                                        padding: '1.25rem',
+                                        borderRadius: '8px',
+                                        border: '2px solid #25D366',
+                                        backgroundColor: '#25D366',
+                                        color: 'white',
+                                        fontSize: '1.1rem',
+                                        fontWeight: '600',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '0.75rem'
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = 'var(--shadow-lg)';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}
+                                >
+                                    📱 Contact us on WhatsApp
+                                </button>
+
+                                {/* Email Contact */}
+                                <button
+                                    onClick={handleEmailContact}
+                                    style={{
+                                        padding: '1.25rem',
+                                        borderRadius: '8px',
+                                        border: '2px solid var(--color-accent)',
+                                        backgroundColor: 'var(--color-accent)',
+                                        color: 'white',
+                                        fontSize: '1.1rem',
+                                        fontWeight: '600',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '0.75rem'
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = 'var(--shadow-lg)';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}
+                                >
+                                    📧 Send us an Email
+                                </button>
+
+                                <div style={{ 
+                                    marginTop: '1.5rem', 
+                                    padding: '1.25rem', 
+                                    backgroundColor: '#f0f9ff', 
+                                    borderRadius: '8px', 
+                                    border: '1px solid #bae6fd' 
+                                }}>
+                                    <h4 style={{ color: 'var(--color-primary)', marginBottom: '0.75rem', fontSize: '1rem' }}>
+                                        💬 What can you contact us about?
+                                    </h4>
+                                    <ul style={{ margin: 0, paddingLeft: '1.5rem', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
+                                        <li>General questions about our ministry</li>
+                                        <li>Prayer requests and spiritual guidance</li>
+                                        <li>Event inquiries and information</li>
+                                        <li>Partnership and volunteer opportunities</li>
+                                        <li>Technical support for the website</li>
+                                        <li>Testimonies and feedback</li>
+                                    </ul>
+                                </div>
+
+                                <div style={{ 
+                                    marginTop: '1rem', 
+                                    padding: '1.25rem', 
+                                    backgroundColor: 'var(--color-surface)', 
+                                    borderRadius: '8px', 
+                                    borderLeft: '4px solid var(--color-primary)' 
+                                }}>
+                                    <h4 style={{ color: 'var(--color-primary)', marginBottom: '0.5rem', fontSize: '1rem' }}>
+                                        🙏 Prayer Requests
+                                    </h4>
+                                    <p style={{ margin: 0, color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
+                                        Need prayer? We'd be honored to pray for you. Share your prayer requests through any of the contact methods above, 
+                                        and our prayer team will lift you up in prayer.
+                                    </p>
+                                </div>
+
+                                <div style={{ 
+                                    marginTop: '1rem', 
+                                    padding: '1rem', 
+                                    backgroundColor: '#ecfdf5', 
+                                    borderRadius: '8px', 
+                                    border: '1px solid #a7f3d0',
+                                    textAlign: 'center'
+                                }}>
+                                    <p style={{ margin: 0, color: 'var(--color-primary)', fontSize: '0.9rem', fontWeight: '600' }}>
+                                        ⚡ We typically respond within 24 hours
+                                    </p>
+                                </div>
+                            </div>
                         </div>
 
                         {/* Contact Info & Map */}
