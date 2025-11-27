@@ -97,6 +97,12 @@ const DonationSystem = ({ streamId, onDonationComplete }) => {
         },
     };
 
+    // Debug: Check if environment variable is loaded
+    if (!import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY) {
+        console.error('Flutterwave public key not found in environment variables');
+        console.log('Available env vars:', import.meta.env);
+    }
+
     const handleFlutterwavePayment = useFlutterwave(config);
 
     const handleDonationSubmit = () => {
