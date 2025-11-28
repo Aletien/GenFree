@@ -1,0 +1,2 @@
+# Additional requirements for analytics functionality
+user-agents==2.2.0

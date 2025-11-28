@@ -1,0 +1,29 @@
+# Minimal Django Backend Requirements for GenFree Network
+# This file contains only essential packages for development
+
+# Core Django
+Django>=4.2,<5.0
+djangorestframework>=3.14.0
+django-cors-headers>=4.3.0
+
+# Database (SQLite for development, no PostgreSQL needed initially)
+dj-database-url>=2.1.0
+
+# Authentication & Security
+djangorestframework-simplejwt>=5.3.0
+django-allauth>=0.56.0
+
+# Payment processing
+requests>=2.31.0
+python-decouple>=3.8
+
+# API documentation
+drf-spectacular>=0.26.0
+
+# Utilities
+python-slugify>=8.0.0
+django-filter>=23.3
+
+# Production
+gunicorn>=21.0.0
+whitenoise>=6.6.0
